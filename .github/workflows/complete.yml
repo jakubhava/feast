@@ -13,11 +13,6 @@ jobs:
       REGISTRY: gcr.io/kf-feast
     steps:
       - uses: actions/checkout@v2
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-        with:
-          version: '270.0.0'
-          service_account_key: ${{ secrets.GCR_SERVICE_ACCOUNT }}
-      - run: gcloud auth configure-docker
       - name: build image
         run: make build-${{ matrix.component }}-docker REGISTRY=${REGISTRY} VERSION=${GITHUB_SHA}
       - name: push image
