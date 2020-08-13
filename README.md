@@ -70,3 +70,9 @@ Please refer to the official documentation at <https://docs.feast.dev>
 ## Notice
 
 Feast is a community project and is still under active development. Your feedback and contributions are important to us. Please have a look at our [contributing guide](docs/contributing/contributing.md) for details.
+
+## How to build
+
+```
+./gradlew build -x check
+```
