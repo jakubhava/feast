@@ -1,1 +1,94 @@
 description = "Feast Python Client"
+apply plugin: 'ru.vyarus.use-python'
+
+import ru.vyarus.gradle.plugin.python.cmd.Python
+task copySources(type: Copy) {
+  from "${projectDir}/src"
+  into "${buildDir}/src"
+}
+
+task copyProtos(type: Copy, dependsOn: [copySources, ":feast-protos:build"]) {
+  from "$rootDir/protos/gen/main/python"
+  into "$buildDir/src"
+}
+
+task updateSetup(type: Copy, dependsOn: copyProtos) {
+  String fileContents = new File("${rootDir}/README.md").getText('UTF-8')
+  from("${projectDir}/src") {
+    include 'setup.py'
+  }
+  filter {
+    it.replaceAll("LONG_DESCRIPTION", "\"\"\"\n" + fileContents + "\"\"\"")
+    .replaceAll("SUBST_VERSION", version.replaceAll("-SNAPSHOT", ".99999"))
+  }
+  into "$buildDir/src"
+}
+
+def getPythonVersion() {
+  Python p = new Python(project, python.getPythonPath(), python.getPythonBinary())
+  return p.version
+}
+
+python {
+  if (project.hasProperty("pythonBinary")) {
+    pythonBinary project.findProperty("pythonBinary").toString()
+  }
+
+  if (project.hasProperty("pythonPath")) {
+    pythonPath project.findProperty("pythonPath").toString()
+  }
+
+  pip "Click:7.1.2"
+  pip "google-api-core:1.22.1"
+  pip "google-auth:1.20.1"
+  pip "google-cloud-bigquery:1.26.1"
+  pip "google-cloud-bigquery-storage:1.0.0"
+  pip "google-cloud-storage:1.30.0"
+  pip "google-resumable-media:0.7.1"
+  pip "googleapis-common-protos:1.52.0"
+  pip "grpcio:1.31.0"
+  pip "grpcio-testing:1.31.0"
+  pip "grpcio-tools:1.31.0"
+  pip "numpy:1.19.1"
+  pip "mock:2.0.0"
+  pip "pandas:1.0.0"
+  pip "protobuf:3.13.0"
+  pip "pytest:6.0.1"
+  pip "pytest-lazy-fixture:0.6.3"
+  pip "pytest-mock:3.2.0"
+  pip "pytest-timeout:1.4.2"
+  pip "pytest-ordering:0.6"
+  pip "PyYAML:5.3.1"
+  pip "fastavro:0.24.1"
+  pip "pyarrow:1.0.0"
+  pip "Sphinx:3.2.1"
+  pip "sphinx-rtd-theme:0.5.0"
+  pip "toml:0.10.1"
+  pip "tqdm:4.48.2"
+  pip "confluent_kafka:1.5.0"
+  pip "google:3.0.0"
+  pip "pandavro:1.5.2"
+  pip "kafka-python:1.4.7"
+  pip "tabulate:0.8.7"
+  pip "isort:5.4.2"
+  pip "mypy:0.782"
+  pip "mypy-protobuf:1.23"
+  pip "pre-commit:2.6.0"
+  pip "flake8:3.8.3"
+  pip "black:19.10b0"
+  pip "boto3:1.14.43"
+  pip "moto:1.3.14"
+  envPath "${rootDir}/.gradle/python/${getPythonVersion()}"
+}
+
+task cleanPython(type: Delete) {
+  delete getBuildDir()
+}
+
+task distPython(type: Zip, dependsOn: updateSetup) {
+  archiveBaseName = "feast"
+  from "$buildDir/src"
+  destinationDirectory = file("$buildDir/dist")
+}
+
+build.dependsOn distPython

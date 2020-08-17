@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import subprocess
-
 from setuptools import find_packages, setup
 
 NAME = "feast"
@@ -42,25 +39,15 @@ REQUIRED = [
     "tabulate==0.8.*",
     "toml==0.10.*",
     "tqdm==4.*",
-    "pyarrow<0.16.0,>=0.15.1",
+    "pyarrow==1.0.0",
     "numpy",
     "google",
     "confluent_kafka",
 ]
 
-# README file from Feast repo root directory
-repo_root = (
-    subprocess.Popen(["git", "rev-parse", "--show-toplevel"], stdout=subprocess.PIPE)
-    .communicate()[0]
-    .rstrip()
-    .decode("utf-8")
-)
-README_FILE = os.path.join(repo_root, "README.md")
-with open(os.path.join(README_FILE), "r") as f:
-    LONG_DESCRIPTION = f.read()
-
 setup(
     name=NAME,
+    version="SUBST_VERSION",
     author=AUTHOR,
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
@@ -80,9 +67,6 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-    ],
-    entry_points={"console_scripts": ["feast=feast.cli:cli"]},
-    use_scm_version={"root": "../..", "relative_to": __file__},
-    setup_requires=["setuptools_scm"],
+        "Programming Language :: Python :: 3.8"
+    ]
 )

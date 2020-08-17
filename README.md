@@ -94,3 +94,9 @@ To fix formatting issues:
 ```
 ./gradlew spotlessApply
 ```
+
+To prepare Python environment, run:
+
+```
+./gradlew pipInstall
+```
