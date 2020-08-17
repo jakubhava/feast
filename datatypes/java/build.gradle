@@ -5,7 +5,7 @@ description = 'Feast Data Types for Java' +
 
 dependencies {
     implementation 'com.google.guava:guava:26.0-jre'
-    implementation 'com.google.protobuf:protobuf-java:3.12.2'
+    implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
     implementation "io.grpc:grpc-core:${grpcVersion}"
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-services:${grpcVersion}"

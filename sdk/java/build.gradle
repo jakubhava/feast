@@ -8,8 +8,8 @@ dependencies {
     implementation "io.grpc:grpc-netty-shaded:${grpcVersion}"
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
-    implementation 'com.google.protobuf:protobuf-java-util:3.12.2'
-    implementation 'com.google.protobuf:protobuf-java:3.12.2'
+    implementation "com.google.protobuf:protobuf-java-util${protobufVersion}"
+    implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
     implementation 'org.slf4j:slf4j-api:1.7.30'
     implementation 'org.apache.commons:commons-lang3:3.6'
     testImplementation "io.grpc:grpc-testing:${grpcVersion}"
