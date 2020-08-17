@@ -20,7 +20,7 @@ PROTO_SERVICE_SUBDIRS = core serving
 
 # General
 
-format: format-python format-go format-java
+format: format-python format-go
 
 lint: lint-python lint-go lint-java
 
@@ -36,12 +36,6 @@ install-ci-dependencies: install-python-ci-dependencies install-go-ci-dependenci
 
 install-java-ci-dependencies:
 	mvn verify clean --fail-never
-
-format-java:
-	mvn spotless:apply
-
-lint-java:
-	mvn --no-transfer-progress spotless:check
 
 test-java:
 	mvn --no-transfer-progress test

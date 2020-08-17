@@ -58,6 +58,9 @@ subprojects {
             greclipse().configFile("$rootDir/greclipse.properties")
         }
         java {
+            target project.fileTree(project.projectDir) {
+               include "src/**/*.java"
+            }
             googleJavaFormat()
         }
     }

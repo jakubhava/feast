@@ -71,8 +71,21 @@ Please refer to the official documentation at <https://docs.feast.dev>
 
 Feast is a community project and is still under active development. Your feedback and contributions are important to us. Please have a look at our [contributing guide](docs/contributing/contributing.md) for details.
 
-## How to build
+## Development
 
+To build:
 ```
 ./gradlew build -x check
+```
+
+To run linter:
+
+```
+./gradlew spotlessCheck
+```
+
+To fix formatting issues:
+
+```
+./gradlew spotlessApply
 ```
