@@ -20,25 +20,22 @@ PROTO_SERVICE_SUBDIRS = core serving
 
 # General
 
-format: format-python format-go
+format: format-python
 
-lint: lint-python lint-go lint-java
+lint: lint-python
 
-test: test-python test-java test-go
+test: test-python
 
 protos: compile-protos-go compile-protos-python compile-protos-docs
 
-build: protos build-java build-docker build-html
+build: protos build-docker build-html
 
-install-ci-dependencies: install-python-ci-dependencies install-go-ci-dependencies install-java-ci-dependencies
+install-ci-dependencies: install-python-ci-dependencies install-java-ci-dependencies
 
 # Java
 
 install-java-ci-dependencies:
 	mvn verify clean --fail-never
-
-test-java:
-	mvn --no-transfer-progress test
 
 test-java-integration:
 	mvn --no-transfer-progress -Dmaven.javadoc.skip=true -Dgpg.skip -DskipUTs=true clean verify
@@ -84,25 +81,6 @@ lint-python:
 	cd ${ROOT_DIR}/tests/e2e; isort . --check-only
 	cd ${ROOT_DIR}/tests/e2e; flake8 .
 	cd ${ROOT_DIR}/tests/e2e; black --check .
-
-# Go SDK
-
-install-go-ci-dependencies:
-	go get -u github.com/golang/protobuf/protoc-gen-go
-	go get -u golang.org/x/lint/golint
-
-compile-protos-go: install-go-ci-dependencies
-	cd ${ROOT_DIR}/protos; protoc -I/usr/local/include -I. --go_out=plugins=grpc,paths=source_relative:../sdk/go/protos/ tensorflow_metadata/proto/v0/*.proto
-	$(foreach dir,types serving core storage,cd ${ROOT_DIR}/protos; protoc -I/usr/local/include -I. --go_out=plugins=grpc,paths=source_relative:../sdk/go/protos feast/$(dir)/*.proto;)
-
-test-go:
-	cd ${ROOT_DIR}/sdk/go; go test ./...
-
-format-go:
-	cd ${ROOT_DIR}/sdk/go; gofmt -s -w *.go
-
-lint-go:
-	cd ${ROOT_DIR}/sdk/go; go vet
 
 # Docker
 

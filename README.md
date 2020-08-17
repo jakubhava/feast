@@ -78,6 +78,11 @@ To build:
 ./gradlew build -x check
 ```
 
+To run tests:
+```
+./gradlew test
+```
+
 To run linter:
 
 ```
