@@ -16,8 +16,8 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-web:2.12.1'
     implementation 'org.springframework.boot:spring-boot-devtools:2.3.1.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-actuator:2.3.1.RELEASE'
-    implementation 'io.grpc:grpc-services:1.31.1'
-    implementation 'io.grpc:grpc-stub:1.31.1'
+    implementation "io.grpc:grpc-services:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
     implementation 'com.google.protobuf:protobuf-java-util:3.12.2'
     implementation 'com.google.guava:guava:29.0-jre'
     implementation 'joda-time:joda-time:2.9.9'
@@ -41,7 +41,7 @@ dependencies {
     implementation 'com.nimbusds:nimbus-jose-jwt:8.2.1'
     implementation 'org.springframework.security:spring-security-oauth2-core:5.3.0.RELEASE'
 
-    testImplementation 'io.grpc:grpc-testing:1.31.1'
+    testImplementation "io.grpc:grpc-testing:${grpcVersion}"
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.3.1.RELEASE'
     testImplementation 'org.mockito:mockito-core:2.28.2'
     testImplementation 'com.github.kstyrc:embedded-redis:0.6'
