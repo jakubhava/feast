@@ -54,6 +54,9 @@ sourceSets {
     }
 }
 
+javadoc {
+    exclude 'feast/auth/providers/http/client/**'
+}
 java {
     withJavadocJar()
 }
