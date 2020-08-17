@@ -1,62 +1,62 @@
 description = 'Feast Authentication and Authorization'
 apply plugin: 'org.openapi.generator'
 dependencies {
-    implementation project(':feast-common')
-    implementation 'org.springframework:spring-context-support:5.2.7.RELEASE'
-    implementation 'net.devh:grpc-server-spring-boot-starter:2.9.0.RELEASE'
-    implementation 'org.springframework.security:spring-security-oauth2-resource-server:5.3.0.RELEASE'
-    implementation 'org.springframework.security:spring-security-oauth2-jose:5.3.0.RELEASE'
-    implementation 'org.hibernate.validator:hibernate-validator:6.1.2.Final'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.0'
-    implementation 'io.swagger:swagger-annotations:1.5.24'
-    implementation 'com.squareup.okhttp3:okhttp:3.14.7'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.14.7'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'io.gsonfire:gson-fire:1.8.4'
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation 'org.springframework.boot:spring-boot-starter-web:2.3.1.RELEASE'
-    implementation 'io.springfox:springfox-swagger2:2.8.0'
-    implementation 'io.springfox:springfox-swagger-ui:2.8.0'
-    implementation 'javax.xml.bind:jaxb-api:2.2.11'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.0'
-    implementation 'org.openapitools:jackson-databind-nullable:0.1.0'
-    implementation 'javax.validation:validation-api:2.0.1.Final'
-    implementation 'junit:junit:4.12'
-    implementation 'com.google.auth:google-auth-library-oauth2-http:0.20.0'
+  implementation project(':feast-common')
+  implementation 'org.springframework:spring-context-support:5.2.7.RELEASE'
+  implementation 'net.devh:grpc-server-spring-boot-starter:2.9.0.RELEASE'
+  implementation 'org.springframework.security:spring-security-oauth2-resource-server:5.3.0.RELEASE'
+  implementation 'org.springframework.security:spring-security-oauth2-jose:5.3.0.RELEASE'
+  implementation 'org.hibernate.validator:hibernate-validator:6.1.2.Final'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.0'
+  implementation 'io.swagger:swagger-annotations:1.5.24'
+  implementation 'com.squareup.okhttp3:okhttp:3.14.7'
+  implementation 'com.squareup.okhttp3:logging-interceptor:3.14.7'
+  implementation 'com.google.code.gson:gson:2.8.6'
+  implementation 'io.gsonfire:gson-fire:1.8.4'
+  implementation 'com.google.code.findbugs:jsr305:3.0.2'
+  implementation 'org.springframework.boot:spring-boot-starter-web:2.3.1.RELEASE'
+  implementation 'io.springfox:springfox-swagger2:2.8.0'
+  implementation 'io.springfox:springfox-swagger-ui:2.8.0'
+  implementation 'javax.xml.bind:jaxb-api:2.2.11'
+  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.0'
+  implementation 'org.openapitools:jackson-databind-nullable:0.1.0'
+  implementation 'javax.validation:validation-api:2.0.1.Final'
+  implementation 'junit:junit:4.12'
+  implementation 'com.google.auth:google-auth-library-oauth2-http:0.20.0'
 
-    testImplementation 'org.springframework:spring-test:5.2.7.RELEASE'
-    testImplementation 'org.mockito:mockito-core:2.28.2'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.3.1.RELEASE'
+  testImplementation 'org.springframework:spring-test:5.2.7.RELEASE'
+  testImplementation 'org.mockito:mockito-core:2.28.2'
+  testImplementation 'org.springframework.boot:spring-boot-starter-test:2.3.1.RELEASE'
 
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+  compileOnly 'org.projectlombok:lombok:1.18.12'
+  annotationProcessor 'org.projectlombok:lombok:1.18.12'
 }
 
 openApiGenerate {
-    generatorName = "java"
-    inputSpec = "${projectDir}/src/main/resources/api.yaml".toString()
-    outputDir = "$buildDir/generated".toString()
-    apiPackage = "feast.auth.providers.http.client.api"
-    invokerPackage = "feast.auth.providers.http.client.invoker"
-    modelPackage = "feast.auth.providers.http.client.model"
-    configOptions = [
-            dateLibrary: "java8"
-    ]
+  generatorName = "java"
+  inputSpec = "${projectDir}/src/main/resources/api.yaml".toString()
+  outputDir = "$buildDir/generated".toString()
+  apiPackage = "feast.auth.providers.http.client.api"
+  invokerPackage = "feast.auth.providers.http.client.invoker"
+  modelPackage = "feast.auth.providers.http.client.model"
+  configOptions = [
+    dateLibrary: "java8"
+  ]
 }
 
 compileJava.dependsOn tasks.openApiGenerate
 
 sourceSets {
-    main {
-        java {
-            srcDir "$buildDir/generated/src/main/java"
-        }
+  main {
+    java {
+      srcDir "$buildDir/generated/src/main/java"
     }
+  }
 }
 
 javadoc {
-    exclude 'feast/auth/providers/http/client/**'
+  exclude 'feast/auth/providers/http/client/**'
 }
 java {
-    withJavadocJar()
+  withJavadocJar()
 }

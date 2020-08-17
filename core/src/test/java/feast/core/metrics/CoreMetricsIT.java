@@ -18,11 +18,11 @@ package feast.core.metrics;
 
 import static org.junit.Assert.assertTrue;
 
+import feast.core.it.BaseIT;
+import java.io.IOException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import feast.core.it.BaseIT;
-import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

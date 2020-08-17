@@ -1,19 +1,19 @@
 description = 'Feast Data Types for Java' +
-        '        Data types and service contracts used throughout Feast components and\n' +
-        '        their interchanges. These are generated from Protocol Buffers and gRPC\n' +
-        '        definitions included in the package.'
+  '        Data types and service contracts used throughout Feast components and\n' +
+  '        their interchanges. These are generated from Protocol Buffers and gRPC\n' +
+  '        definitions included in the package.'
 
 dependencies {
-    implementation 'com.google.guava:guava:26.0-jre'
-    implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
-    implementation "io.grpc:grpc-core:${grpcVersion}"
-    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
-    implementation "io.grpc:grpc-services:${grpcVersion}"
-    implementation "io.grpc:grpc-stub:${grpcVersion}"
-    implementation 'javax.annotation:javax.annotation-api:1.3.2'
+  implementation 'com.google.guava:guava:26.0-jre'
+  implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
+  implementation "io.grpc:grpc-core:${grpcVersion}"
+  implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+  implementation "io.grpc:grpc-services:${grpcVersion}"
+  implementation "io.grpc:grpc-stub:${grpcVersion}"
+  implementation 'javax.annotation:javax.annotation-api:1.3.2'
 }
 
 
 java {
-    withJavadocJar()
+  withJavadocJar()
 }
