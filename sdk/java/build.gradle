@@ -5,14 +5,14 @@
 dependencies {
     implementation project(':datatypes-java')
     implementation project(':feast-common')
-    implementation 'io.grpc:grpc-netty-shaded:1.30.2'
-    implementation 'io.grpc:grpc-protobuf:1.30.2'
-    implementation 'io.grpc:grpc-stub:1.30.2'
+    implementation 'io.grpc:grpc-netty-shaded:1.31.1'
+    implementation 'io.grpc:grpc-protobuf:1.31.1'
+    implementation 'io.grpc:grpc-stub:1.31.1'
     implementation 'com.google.protobuf:protobuf-java-util:3.12.2'
     implementation 'com.google.protobuf:protobuf-java:3.12.2'
     implementation 'org.slf4j:slf4j-api:1.7.30'
     implementation 'org.apache.commons:commons-lang3:3.6'
-    testImplementation 'io.grpc:grpc-testing:1.30.2'
+    testImplementation 'io.grpc:grpc-testing:1.31.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.5.2'

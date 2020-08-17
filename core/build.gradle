@@ -4,6 +4,7 @@ dependencies {
     implementation project(':feast-ingestion')
     implementation project(':feast-common')
     implementation project(':feast-auth')
+    implementation project(':feast-protos')
     implementation 'org.springframework.boot:spring-boot-devtools:2.3.1.RELEASE'
     implementation 'javax.inject:javax.inject:1'
     implementation 'org.springframework.boot:spring-boot-starter-web:2.3.1.RELEASE'
@@ -22,8 +23,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.3.1.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-actuator:2.3.1.RELEASE'
     implementation 'org.springframework.boot:spring-boot-configuration-processor:2.3.1.RELEASE'
-    implementation 'io.grpc:grpc-services:1.30.2'
-    implementation 'io.grpc:grpc-stub:1.30.2'
+    implementation 'io.grpc:grpc-services:1.31.1'
+    implementation 'io.grpc:grpc-stub:1.31.1'
     implementation 'com.google.protobuf:protobuf-java-util:3.12.2'
     implementation 'com.google.guava:guava:26.0-jre'
     implementation 'com.google.code.gson:gson:2.8.5'
@@ -40,6 +41,7 @@ dependencies {
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
     implementation 'org.flywaydb:flyway-core:6.0.8'
     implementation 'org.hibernate.validator:hibernate-validator-annotation-processor:6.1.2.Final'
+
     testImplementation 'com.jayway.jsonpath:json-path-assert:2.2.0'
     testImplementation 'org.springframework.boot:spring-boot-test:2.3.1.RELEASE'
     testImplementation 'org.springframework.boot:spring-boot-test-autoconfigure:2.3.1.RELEASE'
@@ -56,7 +58,10 @@ dependencies {
     testImplementation 'org.awaitility:awaitility:3.0.0'
     testImplementation 'org.awaitility:awaitility-proxy:3.0.0'
     compileOnly 'org.postgresql:postgresql:42.2.14'
+
     compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+
 }
 
 java {

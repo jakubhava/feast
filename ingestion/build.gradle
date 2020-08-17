@@ -6,6 +6,7 @@ dependencies {
     implementation project(':feast-storage-connectors-bigquery')
     implementation project(':feast-storage-connectors-redis')
     implementation project(':feast-common')
+    implementation project(':feast-protos')
     implementation 'com.google.auto.value:auto-value-annotations:1.6.6'
     implementation 'com.google.cloud:google-cloud-bigquery:1.111.1'
     implementation 'org.hamcrest:hamcrest-core:2.2'
@@ -27,7 +28,9 @@ dependencies {
     testImplementation 'com.github.kstyrc:embedded-redis:0.6'
     testImplementation 'org.apache.kafka:kafka_2.12:2.5.0'
     testImplementation 'org.slf4j:slf4j-simple:1.7.30'
-    compileOnly 'com.google.auto.value:auto-value:1.6.6'
+
+    compileOnly 'com.google.auto.value:auto-value-annotations:1.6.6'
+    annotationProcessor 'com.google.auto.value:auto-value:1.6.6'
 }
 
 java {
