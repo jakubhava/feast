@@ -26,7 +26,7 @@ lint: lint-python
 
 test: test-python
 
-protos: compile-protos-go compile-protos-python compile-protos-docs
+protos: compile-protos-python compile-protos-docs
 
 build: protos build-docker build-html
 

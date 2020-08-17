@@ -11,6 +11,7 @@ dependencies {
   implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
   implementation 'org.slf4j:slf4j-api:1.7.30'
   implementation 'org.apache.commons:commons-lang3:3.6'
+
   testImplementation "io.grpc:grpc-testing:${grpcVersion}"
   testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
@@ -18,8 +19,6 @@ dependencies {
   testImplementation 'org.mockito:mockito-core:2.28.2'
   testImplementation 'org.mockito:mockito-inline:2.28.2'
 }
-
-description = 'Feast SDK for Java'
 
 java {
   withJavadocJar()
