@@ -178,7 +178,7 @@ dmypy.json
 # This pom should not be committed because it is only used during release / deployment.
 .flattened-pom.xml
 
-sdk/python/docs/html
+client-python/src/docs/html
 
 # Generated python code
 *_pb2.py
