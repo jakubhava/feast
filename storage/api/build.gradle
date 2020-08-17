@@ -5,11 +5,14 @@
 dependencies {
     implementation project(':datatypes-java')
     implementation project(':feast-common')
+    implementation project(":feast-protos")
     implementation 'org.apache.beam:beam-sdks-java-core:2.22.0'
     implementation 'com.google.auto.value:auto-value-annotations:1.6.6'
     implementation 'org.apache.commons:commons-lang3:3.9'
     testImplementation 'junit:junit:4.12'
-    compileOnly 'com.google.auto.value:auto-value:1.6.6'
+
+    compileOnly 'com.google.auto.value:auto-value-annotations:1.6.6'
+    annotationProcessor 'com.google.auto.value:auto-value:1.6.6'
 }
 
 description = 'Feast Storage API'

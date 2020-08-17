@@ -3,8 +3,8 @@ description = 'Feast Serving'
 dependencies {
     implementation project(':datatypes-java')
     implementation project(':feast-storage-api')
-    implementation project(':feast-storage-connectors:feast-storage-connector-redis')
-    implementation project(':feast-storage-connectors:feast-storage-connector-bigquery')
+    implementation project(':feast-storage-connectors-bigquery')
+    implementation project(':feast-storage-connectors-redis')
     implementation project(':feast-common')
     implementation project(':feast-auth')
     implementation 'org.slf4j:slf4j-api:1.7.30'

@@ -67,7 +67,7 @@ public abstract class HistoricalRetrievalResult implements Serializable {
    * @param id retrieval id identifying the retrieval request
    * @param fileUris list of output file URIs
    * @param dataFormat data format of the output files
-   * @return
+   * @return Historical retrieval result
    */
   public static HistoricalRetrievalResult success(
       String id, List<String> fileUris, DataFormat dataFormat) {
