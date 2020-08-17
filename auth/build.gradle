@@ -33,15 +33,25 @@ dependencies {
 }
 
 openApiGenerate {
-    generatorName = "spring"
+    generatorName = "java"
     inputSpec = "${projectDir}/src/main/resources/api.yaml".toString()
-    outputDir = "${projectDir}".toString()
+    outputDir = "$buildDir/generated".toString()
     apiPackage = "feast.auth.providers.http.client.api"
     invokerPackage = "feast.auth.providers.http.client.invoker"
     modelPackage = "feast.auth.providers.http.client.model"
     configOptions = [
             dateLibrary: "java8"
     ]
+}
+
+compileJava.dependsOn tasks.openApiGenerate
+
+sourceSets {
+    main {
+        java {
+            srcDir "$buildDir/generated/src/main/java"
+        }
+    }
 }
 
 java {
