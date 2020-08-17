@@ -5,6 +5,12 @@ dependencies {
     implementation project(':feast-common')
     implementation project(':feast-auth')
     implementation project(':feast-protos')
+    implementation project(':feast-storage-api')
+    implementation project(':feast-storage-connectors-bigquery')
+    implementation 'javax.validation:validation-api:2.0.1.Final'
+    implementation 'org.apache.beam:beam-runners-google-cloud-dataflow-java:2.22.0'
+    implementation 'org.apache.beam:beam-runners-direct-java:2.22.0'
+    implementation 'org.apache.beam:beam-sdks-java-io-kafka:2.22.0'
     implementation 'org.springframework.boot:spring-boot-devtools:2.3.1.RELEASE'
     implementation 'javax.inject:javax.inject:1'
     implementation 'org.springframework.boot:spring-boot-starter-web:2.3.1.RELEASE'
@@ -60,6 +66,7 @@ dependencies {
     compileOnly 'org.postgresql:postgresql:42.2.14'
 
     compileOnly 'org.projectlombok:lombok:1.18.12'
+    testCompileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
 }

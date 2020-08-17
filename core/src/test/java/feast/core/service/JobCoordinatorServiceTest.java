@@ -534,7 +534,7 @@ public class JobCoordinatorServiceTest {
 
   @Test
   @SneakyThrows
-  public void shouldNotUpdateJobStatusVersionWhenKafkaUnavailable() {
+  public void shouldNotUpdateJobStatusVersionWhenKafkaUnavailable() throws Exception {
     FeatureSet fsInTest =
         TestUtil.CreateFeatureSet(
             "fs_1", "project", Collections.emptyList(), Collections.emptyList());
@@ -547,7 +547,7 @@ public class JobCoordinatorServiceTest {
     CancellationException exc = new CancellationException();
     when(kafkaTemplate.sendDefault(eq(fsInTest.getReference()), any()).get()).thenThrow(exc);
     when(featureSetRepository.findAllByStatus(FeatureSetProto.FeatureSetStatus.STATUS_PENDING))
-        .thenReturn(ImmutableList.of(fsInTest));
+            .thenReturn(ImmutableList.of(fsInTest));
     when(specService.listStores(any())).thenReturn(ListStoresResponse.newBuilder().build());
 
     jcsWithConsolidation.notifyJobsWhenFeatureSetUpdated();

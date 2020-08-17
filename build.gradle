@@ -6,17 +6,18 @@ buildscript {
     dependencies {
         classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.12'
         classpath "org.openapitools:openapi-generator-gradle-plugin:4.3.1"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:4.4.0"
     }
 }
 
 allprojects {
     group = 'dev.feast'
-    version = '0.7-SNAPSHOT'
 }
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
+    apply plugin: "com.diffplug.gradle.spotless"
 
     repositories {
         mavenLocal()
@@ -50,5 +51,14 @@ subprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+    }
+
+    spotless {
+        groovyGradle {
+            greclipse().configFile("$rootDir/greclipse.properties")
+        }
+        java {
+            googleJavaFormat()
+        }
     }
 }
