@@ -112,6 +112,28 @@ task format(type: PythonTask, dependsOn: sortImports) {
   command = "--target-version py38 ${projectDir}/src/feast/  ${projectDir}/src/tests/"
 }
 
+task lintMyPy(type: PythonTask) {
+  module = 'mypy'
+  command = "${projectDir}/src/feast/  ${projectDir}/src/tests/"
+}
+
+task lintIsort(type: PythonTask) {
+  module = 'isort'
+  command = "${projectDir}/src/feast/  ${projectDir}/src/tests/ --check-only"
+}
+
+task lintFlake(type: PythonTask) {
+  module = 'flake8'
+  command = "${projectDir}/src/feast/  ${projectDir}/src/tests/"
+}
+
+task lintBlack(type: PythonTask) {
+  module = 'black'
+  command = "--check ${projectDir}/src/feast/  ${projectDir}/src/tests/"
+}
+
+task lint(dependsOn: [lintMyPy, lintIsort, lintFlake, lintBlack])
+
 spotlessApply.dependsOn format
 
 build.dependsOn distPython

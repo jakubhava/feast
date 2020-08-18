@@ -20,8 +20,6 @@ PROTO_SERVICE_SUBDIRS = core serving
 
 # General
 
-lint: lint-python
-
 protos: compile-protos-docs
 
 build: protos build-docker build-html
@@ -33,12 +31,6 @@ test-java-integration:
 
 test-java-with-coverage:
 	mvn --no-transfer-progress test jacoco:report-aggregate
-
-lint-python:
-	cd ${ROOT_DIR}/sdk/python; mypy feast/ tests/
-	cd ${ROOT_DIR}/sdk/python; isort feast/ tests/ --check-only
-	cd ${ROOT_DIR}/sdk/python; flake8 feast/ tests/
-	cd ${ROOT_DIR}/sdk/python; black --check feast tests
 
 # Docker
 
