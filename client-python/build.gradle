@@ -2,7 +2,12 @@ description = "Feast Python Client"
 apply plugin: 'ru.vyarus.use-python'
 
 import ru.vyarus.gradle.plugin.python.cmd.Python
-task copySources(type: Copy) {
+
+task cleanPython(type: Delete) {
+  delete getBuildDir()
+}
+
+task copySources(type: Copy, dependsOn: cleanPython) {
   from "${projectDir}/src"
   into "${buildDir}/src"
 }
@@ -19,7 +24,7 @@ task updateSetup(type: Copy, dependsOn: copyProtos) {
   }
   filter {
     it.replaceAll("LONG_DESCRIPTION", "\"\"\"\n" + fileContents + "\"\"\"")
-    .replaceAll("SUBST_VERSION", version.replaceAll("-SNAPSHOT", ".99999"))
+      .replaceAll("SUBST_VERSION", version.replaceAll("-SNAPSHOT", ".99999"))
   }
   into "$buildDir/src"
 }
@@ -79,10 +84,6 @@ python {
   pip "boto3:1.14.43"
   pip "moto:1.3.14"
   envPath "${rootDir}/.gradle/python/${getPythonVersion()}"
-}
-
-task cleanPython(type: Delete) {
-  delete getBuildDir()
 }
 
 task distPython(type: Zip, dependsOn: updateSetup) {
