@@ -78,7 +78,7 @@ To build:
 ./gradlew build -x check
 ```
 
-To run tests:
+To run tests, including python tests, run:
 ```
 ./gradlew test
 ```
@@ -100,3 +100,4 @@ To prepare Python environment, run:
 ```
 ./gradlew pipInstall
 ```
+

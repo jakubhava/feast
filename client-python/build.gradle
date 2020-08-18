@@ -102,4 +102,16 @@ task testPython(type: PythonTask, dependsOn: installPythonPackage) {
   command = "--verbose --color=yes ${projectDir}/src/tests"
 }
 
+task sortImports(type: PythonTask) {
+  module = 'isort'
+  command = " ${projectDir}/src/feast/  ${projectDir}/src/tests/"
+}
+
+task format(type: PythonTask, dependsOn: sortImports) {
+  module = 'black'
+  command = "--target-version py38 ${projectDir}/src/feast/  ${projectDir}/src/tests/"
+}
+
+spotlessApply.dependsOn format
+
 build.dependsOn distPython

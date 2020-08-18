@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import multiprocessing
-from sys import platform
 import os
 import sys
+from sys import platform
+
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+
 
 def pytest_configure(config):
     if platform in ["darwin", "windows"]:
