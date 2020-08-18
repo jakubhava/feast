@@ -4,6 +4,7 @@ plugins {
     id 'ru.vyarus.use-python' version '2.2.0'
     id "org.openapi.generator" version "4.3.1"
     id 'com.github.johnrengelman.shadow' version '6.0.0'
+    id 'com.bmuschko.docker-remote-api' version '6.6.1'
     id "java"
     id 'jacoco'
 }

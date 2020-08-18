@@ -11,6 +11,7 @@ include(':feast-client-python')
 include(':feast-common')
 include(':feast-auth')
 include(':feast-protos')
+include(':feast-infra')
 
 project(':datatypes-java').projectDir = file('datatypes/java')
 project(':feast-storage-api').projectDir = file('storage/api')
@@ -24,3 +25,5 @@ project(':feast-client-python').projectDir = file('client-python')
 project(':feast-common').projectDir = file('common')
 project(':feast-auth').projectDir = file('auth')
 project(':feast-protos').projectDir = file('protos')
+project(':feast-infra').projectDir = file('infra')
+

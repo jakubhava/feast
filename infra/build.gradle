@@ -1,0 +1,44 @@
+apply plugin: 'base'
+
+import com.bmuschko.gradle.docker.tasks.image.*
+apply plugin: 'com.bmuschko.docker-remote-api'
+
+ext {
+    outputFileCore = file("$buildDir/dist/core/Dockerfile")
+}
+
+configurations {
+    feastCore
+}
+
+dependencies {
+    feastCore project(path: ':feast-core', configuration: 'shadow')
+}
+
+task copyFiles(type: Copy, dependsOn: configurations.feastCore) {
+    from configurations.feastCore.singleFile
+    into file("${buildDir}/dist/core")
+}
+
+task createCoreDockerfile(type: Dockerfile) {
+    destFile = outputFileCore
+    from 'openjdk:11-jre'
+
+    copyFile("feast-core-${version}-all.jar", "/opt/feast/feast-core.jar")
+    // Required for staging jar dependencies when submitting Dataflow jobs.
+    copyFile("feast-core-${version}-all.jar", "/opt/feast/feast-core")
+
+    runCommand """\\
+                wget -q https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.3.1/grpc_health_probe-linux-amd64 -O /usr/bin/grpc-health-probe && \\
+                chmod +x /usr/bin/grpc-health-probe
+                """
+
+    defaultCommand("java", "-Xms2048m", "-Xmx2048m", "-jar", "/opt/feast/feast-core.jar")
+}
+
+task buildCoreImage(type: DockerBuildImage, dependsOn: [copyFiles, createCoreDockerfile]) {
+    inputDir = file("$buildDir/dist/core")
+    images.add("ai.h2o/feast-core:${version}")
+}
+
+task buildImages(dependsOn: [buildCoreImage])
