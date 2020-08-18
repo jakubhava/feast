@@ -20,31 +20,19 @@ PROTO_SERVICE_SUBDIRS = core serving
 
 # General
 
-format: format-python
-
 lint: lint-python
 
-test: test-python
-
-protos: compile-protos-python compile-protos-docs
+protos: compile-protos-docs
 
 build: protos build-docker build-html
 
-install-ci-dependencies: install-python-ci-dependencies install-java-ci-dependencies
-
 # Java
-
-install-java-ci-dependencies:
-	mvn verify clean --fail-never
 
 test-java-integration:
 	mvn --no-transfer-progress -Dmaven.javadoc.skip=true -Dgpg.skip -DskipUTs=true clean verify
 
 test-java-with-coverage:
 	mvn --no-transfer-progress test jacoco:report-aggregate
-
-build-java:
-	mvn clean verify
 
 lint-python:
 	cd ${ROOT_DIR}/sdk/python; mypy feast/ tests/
