@@ -83,6 +83,11 @@ To run tests, including python tests, run:
 ./gradlew test
 ```
 
+To generate coverage test report, run:
+```
+./gradlew jacocoTestReport
+```
+
 To run linter:
 
 ```

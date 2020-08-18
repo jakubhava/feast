@@ -15,19 +15,12 @@
 #
 
 ROOT_DIR 	:= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-PROTO_TYPE_SUBDIRS = core serving types storage
-PROTO_SERVICE_SUBDIRS = core serving
 
 # General
 
 protos: compile-protos-docs
 
 build: protos build-docker build-html
-
-# Java
-
-test-java-with-coverage:
-	mvn --no-transfer-progress test jacoco:report-aggregate
 
 # Docker
 
