@@ -47,10 +47,6 @@ build-java:
 	mvn clean verify
 
 # Python SDK
-
-install-python:
-	pip install -e sdk/python --upgrade
-
 test-python:
 	pytest --verbose --color=yes sdk/python/tests
 
