@@ -13,7 +13,9 @@
 # limitations under the License.
 import multiprocessing
 from sys import platform
-
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 def pytest_configure(config):
     if platform in ["darwin", "windows"]:

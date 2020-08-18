@@ -47,9 +47,6 @@ build-java:
 	mvn clean verify
 
 # Python SDK
-test-python:
-	pytest --verbose --color=yes sdk/python/tests
-
 format-python:
 	# Sort
 	cd ${ROOT_DIR}/sdk/python; isort feast/ tests/

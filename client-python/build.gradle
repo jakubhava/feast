@@ -92,9 +92,14 @@ task distPython(type: Zip, dependsOn: updateSetup) {
   destinationDirectory = file("$buildDir/dist")
 }
 
-task installPythonPackage(type: Exec) {
-  workingDir "${buildDir}/dist"
-  commandLine "pip", "install", "feast-${version}.zip", "--upgrade"
+task installPythonPackage(type: PythonTask, dependsOn: distPython) {
+  module = 'pip'
+  command "install ${buildDir}/dist/feast-${version}.zip --upgrade"
+}
+
+task testPython(type: PythonTask, dependsOn: installPythonPackage) {
+  module = 'pytest'
+  command = "--verbose --color=yes ${projectDir}/src/tests"
 }
 
 build.dependsOn distPython
