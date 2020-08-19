@@ -26,29 +26,15 @@ build: protos build-docker build-html
 
 build-push-docker:
 	@$(MAKE) build-docker registry=$(REGISTRY) version=$(VERSION)
-	@$(MAKE) push-core-docker registry=$(REGISTRY) version=$(VERSION)
-	@$(MAKE) push-serving-docker registry=$(REGISTRY) version=$(VERSION)
 	@$(MAKE) push-ci-docker registry=$(REGISTRY) version=$(VERSION)
 
-build-docker: build-core-docker build-serving-docker build-ci-docker
-
-push-core-docker:
-	docker push $(REGISTRY)/feast-core:$(VERSION)
-
-push-serving-docker:
-	docker push $(REGISTRY)/feast-serving:$(VERSION)
+build-docker: build-ci-docker
 
 push-ci-docker:
 	docker push $(REGISTRY)/feast-ci:$(VERSION)
 
 push-jupyter-docker:
 	docker push $(REGISTRY)/feast-jupyter:$(VERSION)
-
-build-core-docker:
-	docker build -t $(REGISTRY)/feast-core:$(VERSION) -f infra/docker/core/Dockerfile .
-
-build-serving-docker:
-	docker build -t $(REGISTRY)/feast-serving:$(VERSION) -f infra/docker/serving/Dockerfile .
 
 build-ci-docker:
 	docker build -t $(REGISTRY)/feast-ci:$(VERSION) -f infra/docker/ci/Dockerfile .
