@@ -5,20 +5,29 @@ apply plugin: 'com.bmuschko.docker-remote-api'
 
 ext {
     outputFileCore = file("$buildDir/dist/core/Dockerfile")
+    outputFileServing = file("$buildDir/dist/serving/Dockerfile")
 }
 
 configurations {
     feastCore
+    feastServing
 }
 
 dependencies {
     feastCore project(path: ':feast-core', configuration: 'shadow')
+    feastServing project(path: ':feast-serving', configuration: 'shadow')
 }
 
-task copyFiles(type: Copy, dependsOn: configurations.feastCore) {
+task copyCoreJar(type: Copy, dependsOn: configurations.feastCore) {
     from configurations.feastCore.singleFile
     into file("${buildDir}/dist/core")
 }
+
+task copyServingJar(type: Copy, dependsOn: configurations.feastServing) {
+    from configurations.feastServing.singleFile
+    into file("${buildDir}/dist/serving")
+}
+
 
 task createCoreDockerfile(type: Dockerfile) {
     destFile = outputFileCore
@@ -36,9 +45,29 @@ task createCoreDockerfile(type: Dockerfile) {
     defaultCommand("java", "-Xms2048m", "-Xmx2048m", "-jar", "/opt/feast/feast-core.jar")
 }
 
-task buildCoreImage(type: DockerBuildImage, dependsOn: [copyFiles, createCoreDockerfile]) {
+task createServingDockerfile(type: Dockerfile) {
+    destFile = outputFileServing
+    from 'openjdk:11-jre'
+
+    copyFile("feast-serving-${version}-all.jar", "/opt/feast/feast-serving.jar")
+
+    runCommand """\\
+                wget -q https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.3.1/grpc_health_probe-linux-amd64 -O /usr/bin/grpc-health-probe && \\
+                chmod +x /usr/bin/grpc-health-probe
+                """
+
+    defaultCommand("java", "-Xms1024m", "-Xmx1024m", "-jar", "/opt/feast/feast-serving.jar")
+}
+
+task buildServingImage(type: DockerBuildImage, dependsOn: [copyServingJar, createServingDockerfile]) {
+    inputDir = file("$buildDir/dist/serving")
+    images.add("ai.h2o/feast-serving:${version}")
+}
+
+
+task buildCoreImage(type: DockerBuildImage, dependsOn: [copyCoreJar, createCoreDockerfile]) {
     inputDir = file("$buildDir/dist/core")
     images.add("ai.h2o/feast-core:${version}")
 }
 
-task buildImages(dependsOn: [buildCoreImage])
+task buildImages(dependsOn: [buildCoreImage, buildServingImage])
