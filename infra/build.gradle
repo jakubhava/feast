@@ -4,70 +4,101 @@ import com.bmuschko.gradle.docker.tasks.image.*
 apply plugin: 'com.bmuschko.docker-remote-api'
 
 ext {
-    outputFileCore = file("$buildDir/dist/core/Dockerfile")
-    outputFileServing = file("$buildDir/dist/serving/Dockerfile")
+  outputFileCore = file("$buildDir/dist/core/Dockerfile")
+  outputFileServing = file("$buildDir/dist/serving/Dockerfile")
+  outputFilePython = file("$buildDir/dist/jupyter/Dockerfile")
 }
 
 configurations {
-    feastCore
-    feastServing
+  feastCore
+  feastServing
+  feastPython
 }
 
 dependencies {
-    feastCore project(path: ':feast-core', configuration: 'shadow')
-    feastServing project(path: ':feast-serving', configuration: 'shadow')
+  feastCore project(path: ':feast-core', configuration: 'shadow')
+  feastServing project(path: ':feast-serving', configuration: 'shadow')
+  feastPython project(path: ":feast-client-python", configuration: 'dist')
 }
 
 task copyCoreJar(type: Copy, dependsOn: configurations.feastCore) {
-    from configurations.feastCore.singleFile
-    into file("${buildDir}/dist/core")
+  from configurations.feastCore.singleFile
+  into file("${buildDir}/dist/core")
 }
 
 task copyServingJar(type: Copy, dependsOn: configurations.feastServing) {
-    from configurations.feastServing.singleFile
-    into file("${buildDir}/dist/serving")
+  from configurations.feastServing.singleFile
+  into file("${buildDir}/dist/serving")
 }
 
+task copyPythonZip(type: Copy, dependsOn: configurations.feastPython) {
+  from configurations.feastPython.singleFile
+  into file("${buildDir}/dist/jupyter")
+}
+
+task copyPythonExamples(type: Copy) {
+  from "$rootDir/examples"
+  into file("${buildDir}/dist/jupyter/examples")
+}
+
+task createJupyterDockerfile(type: Dockerfile) {
+  destFile = outputFilePython
+  from 'jupyter/minimal-notebook:619e9cc2fc07'
+  user "root"
+  workingDir "/feast"
+  copyFile("feast-${version}.zip", "/opt/feast/feast-python.zip")
+  runCommand "pip install /opt/feast/feast-python.zip --upgrade"
+  user "\$NB_UID"
+  workingDir "\$HOME"
+  copyFile("examples", ".")
+  defaultCommand("start-notebook.sh", "--NotebookApp.token=''")
+}
 
 task createCoreDockerfile(type: Dockerfile) {
-    destFile = outputFileCore
-    from 'openjdk:11-jre'
+  destFile = outputFileCore
+  from 'openjdk:11-jre'
 
-    copyFile("feast-core-${version}-all.jar", "/opt/feast/feast-core.jar")
-    // Required for staging jar dependencies when submitting Dataflow jobs.
-    copyFile("feast-core-${version}-all.jar", "/opt/feast/feast-core")
+  copyFile("feast-core-${version}-all.jar", "/opt/feast/feast-core.jar")
+  // Required for staging jar dependencies when submitting Dataflow jobs.
+  copyFile("feast-core-${version}-all.jar", "/opt/feast/feast-core")
 
-    runCommand """\\
+  runCommand """\\
                 wget -q https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.3.1/grpc_health_probe-linux-amd64 -O /usr/bin/grpc-health-probe && \\
                 chmod +x /usr/bin/grpc-health-probe
                 """
 
-    defaultCommand("java", "-Xms2048m", "-Xmx2048m", "-jar", "/opt/feast/feast-core.jar")
+  defaultCommand("java", "-Xms2048m", "-Xmx2048m", "-jar", "/opt/feast/feast-core.jar")
 }
 
 task createServingDockerfile(type: Dockerfile) {
-    destFile = outputFileServing
-    from 'openjdk:11-jre'
+  destFile = outputFileServing
+  from 'openjdk:11-jre'
 
-    copyFile("feast-serving-${version}-all.jar", "/opt/feast/feast-serving.jar")
+  copyFile("feast-serving-${version}-all.jar", "/opt/feast/feast-serving.jar")
 
-    runCommand """\\
+  runCommand """\\
                 wget -q https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.3.1/grpc_health_probe-linux-amd64 -O /usr/bin/grpc-health-probe && \\
                 chmod +x /usr/bin/grpc-health-probe
                 """
 
-    defaultCommand("java", "-Xms1024m", "-Xmx1024m", "-jar", "/opt/feast/feast-serving.jar")
+  defaultCommand("java", "-Xms1024m", "-Xmx1024m", "-jar", "/opt/feast/feast-serving.jar")
 }
 
+
 task buildServingImage(type: DockerBuildImage, dependsOn: [copyServingJar, createServingDockerfile]) {
-    inputDir = file("$buildDir/dist/serving")
-    images.add("ai.h2o/feast-serving:${version}")
+  inputDir = file("$buildDir/dist/serving")
+  images.add("ai.h2o/feast-serving:${version}")
 }
 
 
 task buildCoreImage(type: DockerBuildImage, dependsOn: [copyCoreJar, createCoreDockerfile]) {
-    inputDir = file("$buildDir/dist/core")
-    images.add("ai.h2o/feast-core:${version}")
+  inputDir = file("$buildDir/dist/core")
+  images.add("ai.h2o/feast-core:${version}")
 }
 
-task buildImages(dependsOn: [buildCoreImage, buildServingImage])
+task buildJupyterImage(type: DockerBuildImage, dependsOn: [copyPythonZip, copyPythonExamples, createJupyterDockerfile]) {
+  inputDir = file("$buildDir/dist/jupyter")
+  images.add("ai.h2o/feast-jupyter:${version}")
+}
+
+task buildImages(dependsOn: [buildCoreImage, buildServingImage, buildJupyterImage])

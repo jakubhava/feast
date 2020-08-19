@@ -92,6 +92,14 @@ task distPython(type: Zip, dependsOn: updateSetup) {
   destinationDirectory = file("$buildDir/dist")
 }
 
+configurations {
+  dist
+}
+
+artifacts {
+  dist distPython
+}
+
 task installPythonPackage(type: PythonTask, dependsOn: distPython) {
   module = 'pip'
   command "install ${buildDir}/dist/feast-${version}.zip --upgrade"
