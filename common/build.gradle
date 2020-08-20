@@ -13,10 +13,10 @@ dependencies {
   implementation 'org.slf4j:slf4j-api:1.7.30'
 
   compileOnly 'com.google.auto.value:auto-value-annotations:1.6.6'
-  compileOnly 'org.projectlombok:lombok:1.18.12'
+  compileOnly "org.projectlombok:lombok:${lombokVersion}"
 
   annotationProcessor 'com.google.auto.value:auto-value:1.6.6'
-  annotationProcessor 'org.projectlombok:lombok:1.18.12'
+  annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
   testImplementation 'junit:junit:4.13'
   testImplementation 'org.hamcrest:hamcrest-library:2.2'

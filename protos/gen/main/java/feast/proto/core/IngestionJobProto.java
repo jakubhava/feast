@@ -320,50 +320,6 @@ public final class IngestionJobProto {
 
     /**
      * <pre>
-     * List of feature sets whose features are populated by this job.
-     * </pre>
-     *
-     * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-     */
-    java.util.List<feast.proto.core.FeatureSetProto.FeatureSet> 
-        getFeatureSetsList();
-    /**
-     * <pre>
-     * List of feature sets whose features are populated by this job.
-     * </pre>
-     *
-     * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-     */
-    feast.proto.core.FeatureSetProto.FeatureSet getFeatureSets(int index);
-    /**
-     * <pre>
-     * List of feature sets whose features are populated by this job.
-     * </pre>
-     *
-     * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-     */
-    int getFeatureSetsCount();
-    /**
-     * <pre>
-     * List of feature sets whose features are populated by this job.
-     * </pre>
-     *
-     * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-     */
-    java.util.List<? extends feast.proto.core.FeatureSetProto.FeatureSetOrBuilder> 
-        getFeatureSetsOrBuilderList();
-    /**
-     * <pre>
-     * List of feature sets whose features are populated by this job.
-     * </pre>
-     *
-     * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-     */
-    feast.proto.core.FeatureSetProto.FeatureSetOrBuilder getFeatureSetsOrBuilder(
-        int index);
-
-    /**
-     * <pre>
      * Source this job is reading from.
      * </pre>
      *
@@ -432,6 +388,50 @@ public final class IngestionJobProto {
      */
     feast.proto.core.StoreProto.StoreOrBuilder getStoresOrBuilder(
         int index);
+
+    /**
+     * <pre>
+     * List of Feature Set References
+     * </pre>
+     *
+     * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+     */
+    java.util.List<feast.proto.core.FeatureSetReferenceProto.FeatureSetReference> 
+        getFeatureSetReferencesList();
+    /**
+     * <pre>
+     * List of Feature Set References
+     * </pre>
+     *
+     * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+     */
+    feast.proto.core.FeatureSetReferenceProto.FeatureSetReference getFeatureSetReferences(int index);
+    /**
+     * <pre>
+     * List of Feature Set References
+     * </pre>
+     *
+     * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+     */
+    int getFeatureSetReferencesCount();
+    /**
+     * <pre>
+     * List of Feature Set References
+     * </pre>
+     *
+     * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+     */
+    java.util.List<? extends feast.proto.core.FeatureSetReferenceProto.FeatureSetReferenceOrBuilder> 
+        getFeatureSetReferencesOrBuilderList();
+    /**
+     * <pre>
+     * List of Feature Set References
+     * </pre>
+     *
+     * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+     */
+    feast.proto.core.FeatureSetReferenceProto.FeatureSetReferenceOrBuilder getFeatureSetReferencesOrBuilder(
+        int index);
   }
   /**
    * <pre>
@@ -453,8 +453,8 @@ public final class IngestionJobProto {
       id_ = "";
       externalId_ = "";
       status_ = 0;
-      featureSets_ = java.util.Collections.emptyList();
       stores_ = java.util.Collections.emptyList();
+      featureSetReferences_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -506,15 +506,6 @@ public final class IngestionJobProto {
               status_ = rawValue;
               break;
             }
-            case 34: {
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                featureSets_ = new java.util.ArrayList<feast.proto.core.FeatureSetProto.FeatureSet>();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              featureSets_.add(
-                  input.readMessage(feast.proto.core.FeatureSetProto.FeatureSet.parser(), extensionRegistry));
-              break;
-            }
             case 42: {
               feast.proto.core.SourceProto.Source.Builder subBuilder = null;
               if (source_ != null) {
@@ -529,12 +520,21 @@ public final class IngestionJobProto {
               break;
             }
             case 50: {
-              if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
                 stores_ = new java.util.ArrayList<feast.proto.core.StoreProto.Store>();
-                mutable_bitField0_ |= 0x00000002;
+                mutable_bitField0_ |= 0x00000001;
               }
               stores_.add(
                   input.readMessage(feast.proto.core.StoreProto.Store.parser(), extensionRegistry));
+              break;
+            }
+            case 58: {
+              if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                featureSetReferences_ = new java.util.ArrayList<feast.proto.core.FeatureSetReferenceProto.FeatureSetReference>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              featureSetReferences_.add(
+                  input.readMessage(feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.parser(), extensionRegistry));
               break;
             }
             default: {
@@ -553,10 +553,10 @@ public final class IngestionJobProto {
             e).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          featureSets_ = java.util.Collections.unmodifiableList(featureSets_);
+          stores_ = java.util.Collections.unmodifiableList(stores_);
         }
         if (((mutable_bitField0_ & 0x00000002) != 0)) {
-          stores_ = java.util.Collections.unmodifiableList(stores_);
+          featureSetReferences_ = java.util.Collections.unmodifiableList(featureSetReferences_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -688,66 +688,6 @@ public final class IngestionJobProto {
       return result == null ? feast.proto.core.IngestionJobProto.IngestionJobStatus.UNRECOGNIZED : result;
     }
 
-    public static final int FEATURE_SETS_FIELD_NUMBER = 4;
-    private java.util.List<feast.proto.core.FeatureSetProto.FeatureSet> featureSets_;
-    /**
-     * <pre>
-     * List of feature sets whose features are populated by this job.
-     * </pre>
-     *
-     * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-     */
-    @java.lang.Override
-    public java.util.List<feast.proto.core.FeatureSetProto.FeatureSet> getFeatureSetsList() {
-      return featureSets_;
-    }
-    /**
-     * <pre>
-     * List of feature sets whose features are populated by this job.
-     * </pre>
-     *
-     * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-     */
-    @java.lang.Override
-    public java.util.List<? extends feast.proto.core.FeatureSetProto.FeatureSetOrBuilder> 
-        getFeatureSetsOrBuilderList() {
-      return featureSets_;
-    }
-    /**
-     * <pre>
-     * List of feature sets whose features are populated by this job.
-     * </pre>
-     *
-     * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-     */
-    @java.lang.Override
-    public int getFeatureSetsCount() {
-      return featureSets_.size();
-    }
-    /**
-     * <pre>
-     * List of feature sets whose features are populated by this job.
-     * </pre>
-     *
-     * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-     */
-    @java.lang.Override
-    public feast.proto.core.FeatureSetProto.FeatureSet getFeatureSets(int index) {
-      return featureSets_.get(index);
-    }
-    /**
-     * <pre>
-     * List of feature sets whose features are populated by this job.
-     * </pre>
-     *
-     * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-     */
-    @java.lang.Override
-    public feast.proto.core.FeatureSetProto.FeatureSetOrBuilder getFeatureSetsOrBuilder(
-        int index) {
-      return featureSets_.get(index);
-    }
-
     public static final int SOURCE_FIELD_NUMBER = 5;
     private feast.proto.core.SourceProto.Source source_;
     /**
@@ -846,6 +786,66 @@ public final class IngestionJobProto {
       return stores_.get(index);
     }
 
+    public static final int FEATURE_SET_REFERENCES_FIELD_NUMBER = 7;
+    private java.util.List<feast.proto.core.FeatureSetReferenceProto.FeatureSetReference> featureSetReferences_;
+    /**
+     * <pre>
+     * List of Feature Set References
+     * </pre>
+     *
+     * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+     */
+    @java.lang.Override
+    public java.util.List<feast.proto.core.FeatureSetReferenceProto.FeatureSetReference> getFeatureSetReferencesList() {
+      return featureSetReferences_;
+    }
+    /**
+     * <pre>
+     * List of Feature Set References
+     * </pre>
+     *
+     * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends feast.proto.core.FeatureSetReferenceProto.FeatureSetReferenceOrBuilder> 
+        getFeatureSetReferencesOrBuilderList() {
+      return featureSetReferences_;
+    }
+    /**
+     * <pre>
+     * List of Feature Set References
+     * </pre>
+     *
+     * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+     */
+    @java.lang.Override
+    public int getFeatureSetReferencesCount() {
+      return featureSetReferences_.size();
+    }
+    /**
+     * <pre>
+     * List of Feature Set References
+     * </pre>
+     *
+     * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+     */
+    @java.lang.Override
+    public feast.proto.core.FeatureSetReferenceProto.FeatureSetReference getFeatureSetReferences(int index) {
+      return featureSetReferences_.get(index);
+    }
+    /**
+     * <pre>
+     * List of Feature Set References
+     * </pre>
+     *
+     * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+     */
+    @java.lang.Override
+    public feast.proto.core.FeatureSetReferenceProto.FeatureSetReferenceOrBuilder getFeatureSetReferencesOrBuilder(
+        int index) {
+      return featureSetReferences_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -869,14 +869,14 @@ public final class IngestionJobProto {
       if (status_ != feast.proto.core.IngestionJobProto.IngestionJobStatus.UNKNOWN.getNumber()) {
         output.writeEnum(3, status_);
       }
-      for (int i = 0; i < featureSets_.size(); i++) {
-        output.writeMessage(4, featureSets_.get(i));
-      }
       if (source_ != null) {
         output.writeMessage(5, getSource());
       }
       for (int i = 0; i < stores_.size(); i++) {
         output.writeMessage(6, stores_.get(i));
+      }
+      for (int i = 0; i < featureSetReferences_.size(); i++) {
+        output.writeMessage(7, featureSetReferences_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -897,10 +897,6 @@ public final class IngestionJobProto {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(3, status_);
       }
-      for (int i = 0; i < featureSets_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(4, featureSets_.get(i));
-      }
       if (source_ != null) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, getSource());
@@ -908,6 +904,10 @@ public final class IngestionJobProto {
       for (int i = 0; i < stores_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(6, stores_.get(i));
+      }
+      for (int i = 0; i < featureSetReferences_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(7, featureSetReferences_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -929,8 +929,6 @@ public final class IngestionJobProto {
       if (!getExternalId()
           .equals(other.getExternalId())) return false;
       if (status_ != other.status_) return false;
-      if (!getFeatureSetsList()
-          .equals(other.getFeatureSetsList())) return false;
       if (hasSource() != other.hasSource()) return false;
       if (hasSource()) {
         if (!getSource()
@@ -938,6 +936,8 @@ public final class IngestionJobProto {
       }
       if (!getStoresList()
           .equals(other.getStoresList())) return false;
+      if (!getFeatureSetReferencesList()
+          .equals(other.getFeatureSetReferencesList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -955,10 +955,6 @@ public final class IngestionJobProto {
       hash = (53 * hash) + getExternalId().hashCode();
       hash = (37 * hash) + STATUS_FIELD_NUMBER;
       hash = (53 * hash) + status_;
-      if (getFeatureSetsCount() > 0) {
-        hash = (37 * hash) + FEATURE_SETS_FIELD_NUMBER;
-        hash = (53 * hash) + getFeatureSetsList().hashCode();
-      }
       if (hasSource()) {
         hash = (37 * hash) + SOURCE_FIELD_NUMBER;
         hash = (53 * hash) + getSource().hashCode();
@@ -966,6 +962,10 @@ public final class IngestionJobProto {
       if (getStoresCount() > 0) {
         hash = (37 * hash) + STORES_FIELD_NUMBER;
         hash = (53 * hash) + getStoresList().hashCode();
+      }
+      if (getFeatureSetReferencesCount() > 0) {
+        hash = (37 * hash) + FEATURE_SET_REFERENCES_FIELD_NUMBER;
+        hash = (53 * hash) + getFeatureSetReferencesList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -1099,8 +1099,8 @@ public final class IngestionJobProto {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
-          getFeatureSetsFieldBuilder();
           getStoresFieldBuilder();
+          getFeatureSetReferencesFieldBuilder();
         }
       }
       @java.lang.Override
@@ -1112,12 +1112,6 @@ public final class IngestionJobProto {
 
         status_ = 0;
 
-        if (featureSetsBuilder_ == null) {
-          featureSets_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
-        } else {
-          featureSetsBuilder_.clear();
-        }
         if (sourceBuilder_ == null) {
           source_ = null;
         } else {
@@ -1126,9 +1120,15 @@ public final class IngestionJobProto {
         }
         if (storesBuilder_ == null) {
           stores_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
+          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
           storesBuilder_.clear();
+        }
+        if (featureSetReferencesBuilder_ == null) {
+          featureSetReferences_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        } else {
+          featureSetReferencesBuilder_.clear();
         }
         return this;
       }
@@ -1160,28 +1160,28 @@ public final class IngestionJobProto {
         result.id_ = id_;
         result.externalId_ = externalId_;
         result.status_ = status_;
-        if (featureSetsBuilder_ == null) {
-          if (((bitField0_ & 0x00000001) != 0)) {
-            featureSets_ = java.util.Collections.unmodifiableList(featureSets_);
-            bitField0_ = (bitField0_ & ~0x00000001);
-          }
-          result.featureSets_ = featureSets_;
-        } else {
-          result.featureSets_ = featureSetsBuilder_.build();
-        }
         if (sourceBuilder_ == null) {
           result.source_ = source_;
         } else {
           result.source_ = sourceBuilder_.build();
         }
         if (storesBuilder_ == null) {
-          if (((bitField0_ & 0x00000002) != 0)) {
+          if (((bitField0_ & 0x00000001) != 0)) {
             stores_ = java.util.Collections.unmodifiableList(stores_);
-            bitField0_ = (bitField0_ & ~0x00000002);
+            bitField0_ = (bitField0_ & ~0x00000001);
           }
           result.stores_ = stores_;
         } else {
           result.stores_ = storesBuilder_.build();
+        }
+        if (featureSetReferencesBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0)) {
+            featureSetReferences_ = java.util.Collections.unmodifiableList(featureSetReferences_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.featureSetReferences_ = featureSetReferences_;
+        } else {
+          result.featureSetReferences_ = featureSetReferencesBuilder_.build();
         }
         onBuilt();
         return result;
@@ -1242,32 +1242,6 @@ public final class IngestionJobProto {
         if (other.status_ != 0) {
           setStatusValue(other.getStatusValue());
         }
-        if (featureSetsBuilder_ == null) {
-          if (!other.featureSets_.isEmpty()) {
-            if (featureSets_.isEmpty()) {
-              featureSets_ = other.featureSets_;
-              bitField0_ = (bitField0_ & ~0x00000001);
-            } else {
-              ensureFeatureSetsIsMutable();
-              featureSets_.addAll(other.featureSets_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.featureSets_.isEmpty()) {
-            if (featureSetsBuilder_.isEmpty()) {
-              featureSetsBuilder_.dispose();
-              featureSetsBuilder_ = null;
-              featureSets_ = other.featureSets_;
-              bitField0_ = (bitField0_ & ~0x00000001);
-              featureSetsBuilder_ = 
-                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                   getFeatureSetsFieldBuilder() : null;
-            } else {
-              featureSetsBuilder_.addAllMessages(other.featureSets_);
-            }
-          }
-        }
         if (other.hasSource()) {
           mergeSource(other.getSource());
         }
@@ -1275,7 +1249,7 @@ public final class IngestionJobProto {
           if (!other.stores_.isEmpty()) {
             if (stores_.isEmpty()) {
               stores_ = other.stores_;
-              bitField0_ = (bitField0_ & ~0x00000002);
+              bitField0_ = (bitField0_ & ~0x00000001);
             } else {
               ensureStoresIsMutable();
               stores_.addAll(other.stores_);
@@ -1288,12 +1262,38 @@ public final class IngestionJobProto {
               storesBuilder_.dispose();
               storesBuilder_ = null;
               stores_ = other.stores_;
-              bitField0_ = (bitField0_ & ~0x00000002);
+              bitField0_ = (bitField0_ & ~0x00000001);
               storesBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getStoresFieldBuilder() : null;
             } else {
               storesBuilder_.addAllMessages(other.stores_);
+            }
+          }
+        }
+        if (featureSetReferencesBuilder_ == null) {
+          if (!other.featureSetReferences_.isEmpty()) {
+            if (featureSetReferences_.isEmpty()) {
+              featureSetReferences_ = other.featureSetReferences_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureFeatureSetReferencesIsMutable();
+              featureSetReferences_.addAll(other.featureSetReferences_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.featureSetReferences_.isEmpty()) {
+            if (featureSetReferencesBuilder_.isEmpty()) {
+              featureSetReferencesBuilder_.dispose();
+              featureSetReferencesBuilder_ = null;
+              featureSetReferences_ = other.featureSetReferences_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              featureSetReferencesBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getFeatureSetReferencesFieldBuilder() : null;
+            } else {
+              featureSetReferencesBuilder_.addAllMessages(other.featureSetReferences_);
             }
           }
         }
@@ -1578,318 +1578,6 @@ public final class IngestionJobProto {
         return this;
       }
 
-      private java.util.List<feast.proto.core.FeatureSetProto.FeatureSet> featureSets_ =
-        java.util.Collections.emptyList();
-      private void ensureFeatureSetsIsMutable() {
-        if (!((bitField0_ & 0x00000001) != 0)) {
-          featureSets_ = new java.util.ArrayList<feast.proto.core.FeatureSetProto.FeatureSet>(featureSets_);
-          bitField0_ |= 0x00000001;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          feast.proto.core.FeatureSetProto.FeatureSet, feast.proto.core.FeatureSetProto.FeatureSet.Builder, feast.proto.core.FeatureSetProto.FeatureSetOrBuilder> featureSetsBuilder_;
-
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public java.util.List<feast.proto.core.FeatureSetProto.FeatureSet> getFeatureSetsList() {
-        if (featureSetsBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(featureSets_);
-        } else {
-          return featureSetsBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public int getFeatureSetsCount() {
-        if (featureSetsBuilder_ == null) {
-          return featureSets_.size();
-        } else {
-          return featureSetsBuilder_.getCount();
-        }
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public feast.proto.core.FeatureSetProto.FeatureSet getFeatureSets(int index) {
-        if (featureSetsBuilder_ == null) {
-          return featureSets_.get(index);
-        } else {
-          return featureSetsBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public Builder setFeatureSets(
-          int index, feast.proto.core.FeatureSetProto.FeatureSet value) {
-        if (featureSetsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureFeatureSetsIsMutable();
-          featureSets_.set(index, value);
-          onChanged();
-        } else {
-          featureSetsBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public Builder setFeatureSets(
-          int index, feast.proto.core.FeatureSetProto.FeatureSet.Builder builderForValue) {
-        if (featureSetsBuilder_ == null) {
-          ensureFeatureSetsIsMutable();
-          featureSets_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          featureSetsBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public Builder addFeatureSets(feast.proto.core.FeatureSetProto.FeatureSet value) {
-        if (featureSetsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureFeatureSetsIsMutable();
-          featureSets_.add(value);
-          onChanged();
-        } else {
-          featureSetsBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public Builder addFeatureSets(
-          int index, feast.proto.core.FeatureSetProto.FeatureSet value) {
-        if (featureSetsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureFeatureSetsIsMutable();
-          featureSets_.add(index, value);
-          onChanged();
-        } else {
-          featureSetsBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public Builder addFeatureSets(
-          feast.proto.core.FeatureSetProto.FeatureSet.Builder builderForValue) {
-        if (featureSetsBuilder_ == null) {
-          ensureFeatureSetsIsMutable();
-          featureSets_.add(builderForValue.build());
-          onChanged();
-        } else {
-          featureSetsBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public Builder addFeatureSets(
-          int index, feast.proto.core.FeatureSetProto.FeatureSet.Builder builderForValue) {
-        if (featureSetsBuilder_ == null) {
-          ensureFeatureSetsIsMutable();
-          featureSets_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          featureSetsBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public Builder addAllFeatureSets(
-          java.lang.Iterable<? extends feast.proto.core.FeatureSetProto.FeatureSet> values) {
-        if (featureSetsBuilder_ == null) {
-          ensureFeatureSetsIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, featureSets_);
-          onChanged();
-        } else {
-          featureSetsBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public Builder clearFeatureSets() {
-        if (featureSetsBuilder_ == null) {
-          featureSets_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
-          onChanged();
-        } else {
-          featureSetsBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public Builder removeFeatureSets(int index) {
-        if (featureSetsBuilder_ == null) {
-          ensureFeatureSetsIsMutable();
-          featureSets_.remove(index);
-          onChanged();
-        } else {
-          featureSetsBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public feast.proto.core.FeatureSetProto.FeatureSet.Builder getFeatureSetsBuilder(
-          int index) {
-        return getFeatureSetsFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public feast.proto.core.FeatureSetProto.FeatureSetOrBuilder getFeatureSetsOrBuilder(
-          int index) {
-        if (featureSetsBuilder_ == null) {
-          return featureSets_.get(index);  } else {
-          return featureSetsBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public java.util.List<? extends feast.proto.core.FeatureSetProto.FeatureSetOrBuilder> 
-           getFeatureSetsOrBuilderList() {
-        if (featureSetsBuilder_ != null) {
-          return featureSetsBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(featureSets_);
-        }
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public feast.proto.core.FeatureSetProto.FeatureSet.Builder addFeatureSetsBuilder() {
-        return getFeatureSetsFieldBuilder().addBuilder(
-            feast.proto.core.FeatureSetProto.FeatureSet.getDefaultInstance());
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public feast.proto.core.FeatureSetProto.FeatureSet.Builder addFeatureSetsBuilder(
-          int index) {
-        return getFeatureSetsFieldBuilder().addBuilder(
-            index, feast.proto.core.FeatureSetProto.FeatureSet.getDefaultInstance());
-      }
-      /**
-       * <pre>
-       * List of feature sets whose features are populated by this job.
-       * </pre>
-       *
-       * <code>repeated .feast.core.FeatureSet feature_sets = 4;</code>
-       */
-      public java.util.List<feast.proto.core.FeatureSetProto.FeatureSet.Builder> 
-           getFeatureSetsBuilderList() {
-        return getFeatureSetsFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          feast.proto.core.FeatureSetProto.FeatureSet, feast.proto.core.FeatureSetProto.FeatureSet.Builder, feast.proto.core.FeatureSetProto.FeatureSetOrBuilder> 
-          getFeatureSetsFieldBuilder() {
-        if (featureSetsBuilder_ == null) {
-          featureSetsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              feast.proto.core.FeatureSetProto.FeatureSet, feast.proto.core.FeatureSetProto.FeatureSet.Builder, feast.proto.core.FeatureSetProto.FeatureSetOrBuilder>(
-                  featureSets_,
-                  ((bitField0_ & 0x00000001) != 0),
-                  getParentForChildren(),
-                  isClean());
-          featureSets_ = null;
-        }
-        return featureSetsBuilder_;
-      }
-
       private feast.proto.core.SourceProto.Source source_;
       private com.google.protobuf.SingleFieldBuilderV3<
           feast.proto.core.SourceProto.Source, feast.proto.core.SourceProto.Source.Builder, feast.proto.core.SourceProto.SourceOrBuilder> sourceBuilder_;
@@ -2048,9 +1736,9 @@ public final class IngestionJobProto {
       private java.util.List<feast.proto.core.StoreProto.Store> stores_ =
         java.util.Collections.emptyList();
       private void ensureStoresIsMutable() {
-        if (!((bitField0_ & 0x00000002) != 0)) {
+        if (!((bitField0_ & 0x00000001) != 0)) {
           stores_ = new java.util.ArrayList<feast.proto.core.StoreProto.Store>(stores_);
-          bitField0_ |= 0x00000002;
+          bitField0_ |= 0x00000001;
          }
       }
 
@@ -2244,7 +1932,7 @@ public final class IngestionJobProto {
       public Builder clearStores() {
         if (storesBuilder_ == null) {
           stores_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
+          bitField0_ = (bitField0_ & ~0x00000001);
           onChanged();
         } else {
           storesBuilder_.clear();
@@ -2349,12 +2037,324 @@ public final class IngestionJobProto {
           storesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               feast.proto.core.StoreProto.Store, feast.proto.core.StoreProto.Store.Builder, feast.proto.core.StoreProto.StoreOrBuilder>(
                   stores_,
-                  ((bitField0_ & 0x00000002) != 0),
+                  ((bitField0_ & 0x00000001) != 0),
                   getParentForChildren(),
                   isClean());
           stores_ = null;
         }
         return storesBuilder_;
+      }
+
+      private java.util.List<feast.proto.core.FeatureSetReferenceProto.FeatureSetReference> featureSetReferences_ =
+        java.util.Collections.emptyList();
+      private void ensureFeatureSetReferencesIsMutable() {
+        if (!((bitField0_ & 0x00000002) != 0)) {
+          featureSetReferences_ = new java.util.ArrayList<feast.proto.core.FeatureSetReferenceProto.FeatureSetReference>(featureSetReferences_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          feast.proto.core.FeatureSetReferenceProto.FeatureSetReference, feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder, feast.proto.core.FeatureSetReferenceProto.FeatureSetReferenceOrBuilder> featureSetReferencesBuilder_;
+
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public java.util.List<feast.proto.core.FeatureSetReferenceProto.FeatureSetReference> getFeatureSetReferencesList() {
+        if (featureSetReferencesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(featureSetReferences_);
+        } else {
+          return featureSetReferencesBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public int getFeatureSetReferencesCount() {
+        if (featureSetReferencesBuilder_ == null) {
+          return featureSetReferences_.size();
+        } else {
+          return featureSetReferencesBuilder_.getCount();
+        }
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public feast.proto.core.FeatureSetReferenceProto.FeatureSetReference getFeatureSetReferences(int index) {
+        if (featureSetReferencesBuilder_ == null) {
+          return featureSetReferences_.get(index);
+        } else {
+          return featureSetReferencesBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public Builder setFeatureSetReferences(
+          int index, feast.proto.core.FeatureSetReferenceProto.FeatureSetReference value) {
+        if (featureSetReferencesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureFeatureSetReferencesIsMutable();
+          featureSetReferences_.set(index, value);
+          onChanged();
+        } else {
+          featureSetReferencesBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public Builder setFeatureSetReferences(
+          int index, feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder builderForValue) {
+        if (featureSetReferencesBuilder_ == null) {
+          ensureFeatureSetReferencesIsMutable();
+          featureSetReferences_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          featureSetReferencesBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public Builder addFeatureSetReferences(feast.proto.core.FeatureSetReferenceProto.FeatureSetReference value) {
+        if (featureSetReferencesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureFeatureSetReferencesIsMutable();
+          featureSetReferences_.add(value);
+          onChanged();
+        } else {
+          featureSetReferencesBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public Builder addFeatureSetReferences(
+          int index, feast.proto.core.FeatureSetReferenceProto.FeatureSetReference value) {
+        if (featureSetReferencesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureFeatureSetReferencesIsMutable();
+          featureSetReferences_.add(index, value);
+          onChanged();
+        } else {
+          featureSetReferencesBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public Builder addFeatureSetReferences(
+          feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder builderForValue) {
+        if (featureSetReferencesBuilder_ == null) {
+          ensureFeatureSetReferencesIsMutable();
+          featureSetReferences_.add(builderForValue.build());
+          onChanged();
+        } else {
+          featureSetReferencesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public Builder addFeatureSetReferences(
+          int index, feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder builderForValue) {
+        if (featureSetReferencesBuilder_ == null) {
+          ensureFeatureSetReferencesIsMutable();
+          featureSetReferences_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          featureSetReferencesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public Builder addAllFeatureSetReferences(
+          java.lang.Iterable<? extends feast.proto.core.FeatureSetReferenceProto.FeatureSetReference> values) {
+        if (featureSetReferencesBuilder_ == null) {
+          ensureFeatureSetReferencesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, featureSetReferences_);
+          onChanged();
+        } else {
+          featureSetReferencesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public Builder clearFeatureSetReferences() {
+        if (featureSetReferencesBuilder_ == null) {
+          featureSetReferences_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+        } else {
+          featureSetReferencesBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public Builder removeFeatureSetReferences(int index) {
+        if (featureSetReferencesBuilder_ == null) {
+          ensureFeatureSetReferencesIsMutable();
+          featureSetReferences_.remove(index);
+          onChanged();
+        } else {
+          featureSetReferencesBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder getFeatureSetReferencesBuilder(
+          int index) {
+        return getFeatureSetReferencesFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public feast.proto.core.FeatureSetReferenceProto.FeatureSetReferenceOrBuilder getFeatureSetReferencesOrBuilder(
+          int index) {
+        if (featureSetReferencesBuilder_ == null) {
+          return featureSetReferences_.get(index);  } else {
+          return featureSetReferencesBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public java.util.List<? extends feast.proto.core.FeatureSetReferenceProto.FeatureSetReferenceOrBuilder> 
+           getFeatureSetReferencesOrBuilderList() {
+        if (featureSetReferencesBuilder_ != null) {
+          return featureSetReferencesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(featureSetReferences_);
+        }
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder addFeatureSetReferencesBuilder() {
+        return getFeatureSetReferencesFieldBuilder().addBuilder(
+            feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder addFeatureSetReferencesBuilder(
+          int index) {
+        return getFeatureSetReferencesFieldBuilder().addBuilder(
+            index, feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * List of Feature Set References
+       * </pre>
+       *
+       * <code>repeated .feast.core.FeatureSetReference feature_set_references = 7;</code>
+       */
+      public java.util.List<feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder> 
+           getFeatureSetReferencesBuilderList() {
+        return getFeatureSetReferencesFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          feast.proto.core.FeatureSetReferenceProto.FeatureSetReference, feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder, feast.proto.core.FeatureSetReferenceProto.FeatureSetReferenceOrBuilder> 
+          getFeatureSetReferencesFieldBuilder() {
+        if (featureSetReferencesBuilder_ == null) {
+          featureSetReferencesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              feast.proto.core.FeatureSetReferenceProto.FeatureSetReference, feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder, feast.proto.core.FeatureSetReferenceProto.FeatureSetReferenceOrBuilder>(
+                  featureSetReferences_,
+                  ((bitField0_ & 0x00000002) != 0),
+                  getParentForChildren(),
+                  isClean());
+          featureSetReferences_ = null;
+        }
+        return featureSetReferencesBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -4189,31 +4189,31 @@ public final class IngestionJobProto {
   static {
     java.lang.String[] descriptorData = {
       "\n\035feast/core/IngestionJob.proto\022\nfeast.c" +
-      "ore\032\033feast/core/FeatureSet.proto\032\026feast/" +
-      "core/Store.proto\032\027feast/core/Source.prot" +
-      "o\"\324\001\n\014IngestionJob\022\n\n\002id\030\001 \001(\t\022\023\n\013extern" +
-      "al_id\030\002 \001(\t\022.\n\006status\030\003 \001(\0162\036.feast.core" +
-      ".IngestionJobStatus\022,\n\014feature_sets\030\004 \003(" +
-      "\0132\026.feast.core.FeatureSet\022\"\n\006source\030\005 \001(" +
-      "\0132\022.feast.core.Source\022!\n\006stores\030\006 \003(\0132\021." +
-      "feast.core.Store\"w\n\032SpecsStreamingUpdate" +
-      "Config\022-\n\006source\030\001 \001(\0132\035.feast.core.Kafk" +
-      "aSourceConfig\022*\n\003ack\030\002 \001(\0132\035.feast.core." +
-      "KafkaSourceConfig\"a\n\021FeatureSetSpecAck\022\035" +
-      "\n\025feature_set_reference\030\001 \001(\t\022\033\n\023feature" +
-      "_set_version\030\002 \001(\005\022\020\n\010job_name\030\003 \001(\t*\217\001\n" +
-      "\022IngestionJobStatus\022\013\n\007UNKNOWN\020\000\022\013\n\007PEND" +
-      "ING\020\001\022\013\n\007RUNNING\020\002\022\r\n\tCOMPLETED\020\003\022\014\n\010ABO" +
-      "RTING\020\004\022\013\n\007ABORTED\020\005\022\t\n\005ERROR\020\006\022\016\n\nSUSPE" +
-      "NDING\020\007\022\r\n\tSUSPENDED\020\010BZ\n\020feast.proto.co" +
-      "reB\021IngestionJobProtoZ3github.com/feast-" +
-      "dev/feast/sdk/go/protos/feast/coreb\006prot" +
-      "o3"
+      "ore\032$feast/core/FeatureSetReference.prot" +
+      "o\032\026feast/core/Store.proto\032\027feast/core/So" +
+      "urce.proto\"\355\001\n\014IngestionJob\022\n\n\002id\030\001 \001(\t\022" +
+      "\023\n\013external_id\030\002 \001(\t\022.\n\006status\030\003 \001(\0162\036.f" +
+      "east.core.IngestionJobStatus\022\"\n\006source\030\005" +
+      " \001(\0132\022.feast.core.Source\022!\n\006stores\030\006 \003(\013" +
+      "2\021.feast.core.Store\022?\n\026feature_set_refer" +
+      "ences\030\007 \003(\0132\037.feast.core.FeatureSetRefer" +
+      "enceJ\004\010\004\020\005\"w\n\032SpecsStreamingUpdateConfig" +
+      "\022-\n\006source\030\001 \001(\0132\035.feast.core.KafkaSourc" +
+      "eConfig\022*\n\003ack\030\002 \001(\0132\035.feast.core.KafkaS" +
+      "ourceConfig\"a\n\021FeatureSetSpecAck\022\035\n\025feat" +
+      "ure_set_reference\030\001 \001(\t\022\033\n\023feature_set_v" +
+      "ersion\030\002 \001(\005\022\020\n\010job_name\030\003 \001(\t*\217\001\n\022Inges" +
+      "tionJobStatus\022\013\n\007UNKNOWN\020\000\022\013\n\007PENDING\020\001\022" +
+      "\013\n\007RUNNING\020\002\022\r\n\tCOMPLETED\020\003\022\014\n\010ABORTING\020" +
+      "\004\022\013\n\007ABORTED\020\005\022\t\n\005ERROR\020\006\022\016\n\nSUSPENDING\020" +
+      "\007\022\r\n\tSUSPENDED\020\010BZ\n\020feast.proto.coreB\021In" +
+      "gestionJobProtoZ3github.com/feast-dev/fe" +
+      "ast/sdk/go/protos/feast/coreb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          feast.proto.core.FeatureSetProto.getDescriptor(),
+          feast.proto.core.FeatureSetReferenceProto.getDescriptor(),
           feast.proto.core.StoreProto.getDescriptor(),
           feast.proto.core.SourceProto.getDescriptor(),
         });
@@ -4222,7 +4222,7 @@ public final class IngestionJobProto {
     internal_static_feast_core_IngestionJob_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_feast_core_IngestionJob_descriptor,
-        new java.lang.String[] { "Id", "ExternalId", "Status", "FeatureSets", "Source", "Stores", });
+        new java.lang.String[] { "Id", "ExternalId", "Status", "Source", "Stores", "FeatureSetReferences", });
     internal_static_feast_core_SpecsStreamingUpdateConfig_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_feast_core_SpecsStreamingUpdateConfig_fieldAccessorTable = new
@@ -4235,7 +4235,7 @@ public final class IngestionJobProto {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_feast_core_FeatureSetSpecAck_descriptor,
         new java.lang.String[] { "FeatureSetReference", "FeatureSetVersion", "JobName", });
-    feast.proto.core.FeatureSetProto.getDescriptor();
+    feast.proto.core.FeatureSetReferenceProto.getDescriptor();
     feast.proto.core.StoreProto.getDescriptor();
     feast.proto.core.SourceProto.getDescriptor();
   }

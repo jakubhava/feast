@@ -46,7 +46,6 @@ import feast.proto.core.FeatureSetProto.FeatureSet;
 import feast.proto.core.SourceProto.Source;
 import feast.proto.core.StoreProto.Store;
 import java.util.*;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.Before;
@@ -76,15 +75,15 @@ public class JobCoordinatorServiceTest {
     jobProperties.setJobUpdateTimeoutSeconds(5);
 
     JobProperties.CoordinatorProperties.FeatureSetSelector selector =
-            new JobProperties.CoordinatorProperties.FeatureSetSelector();
+        new JobProperties.CoordinatorProperties.FeatureSetSelector();
     selector.setName("fs*");
     selector.setProject("*");
 
     JobProperties.CoordinatorProperties coordinatorProperties =
-            new JobProperties.CoordinatorProperties();
+        new JobProperties.CoordinatorProperties();
     coordinatorProperties.setFeatureSetSelector(ImmutableList.of(selector));
     coordinatorProperties.setWhitelistedStores(
-            ImmutableList.of("test-store", "test", "test-1", "test-2", "normal-store"));
+        ImmutableList.of("test-store", "test", "test-1", "test-2", "normal-store"));
     coordinatorProperties.setJobSelector(ImmutableMap.of("application", "feast"));
 
     jobProperties.setCoordinator(coordinatorProperties);
@@ -99,22 +98,22 @@ public class JobCoordinatorServiceTest {
     jobRepository = new InMemoryJobRepository(jobManager);
 
     jcsWithConsolidation =
-            new JobCoordinatorService(
-                    jobRepository,
-                    specService,
-                    jobManager,
-                    feastProperties,
-                    new ConsolidatedJobStrategy(jobRepository),
-                    mock(KafkaTemplate.class));
+        new JobCoordinatorService(
+            jobRepository,
+            specService,
+            jobManager,
+            feastProperties,
+            new ConsolidatedJobStrategy(jobRepository),
+            mock(KafkaTemplate.class));
 
     jcsWithJobPerStore =
-            new JobCoordinatorService(
-                    jobRepository,
-                    specService,
-                    jobManager,
-                    feastProperties,
-                    new JobPerStoreStrategy(jobRepository),
-                    mock(KafkaTemplate.class));
+        new JobCoordinatorService(
+            jobRepository,
+            specService,
+            jobManager,
+            feastProperties,
+            new JobPerStoreStrategy(jobRepository),
+            mock(KafkaTemplate.class));
   }
 
   @Test
@@ -122,7 +121,7 @@ public class JobCoordinatorServiceTest {
     when(specService.listStores(any())).thenReturn(ListStoresResponse.newBuilder().build());
 
     List<JobTask> jobTasks =
-            jcsWithConsolidation.makeJobUpdateTasks(jcsWithConsolidation.getSourceToStoreMappings());
+        jcsWithConsolidation.makeJobUpdateTasks(jcsWithConsolidation.getSourceToStoreMappings());
 
     assertThat(jobTasks, hasSize(0));
   }
@@ -132,23 +131,22 @@ public class JobCoordinatorServiceTest {
     Store storeSpec = DataGenerator.getDefaultStore();
 
     when(specService.listStores(any()))
-            .thenReturn(ListStoresResponse.newBuilder().addStore(storeSpec).build());
+        .thenReturn(ListStoresResponse.newBuilder().addStore(storeSpec).build());
     when(specService.listFeatureSets(
             Filter.newBuilder().setProject("*").setFeatureSetName("*").build()))
-            .thenReturn(ListFeatureSetsResponse.newBuilder().build());
+        .thenReturn(ListFeatureSetsResponse.newBuilder().build());
 
     List<JobTask> jobTasks =
-            jcsWithConsolidation.makeJobUpdateTasks(jcsWithConsolidation.getSourceToStoreMappings());
+        jcsWithConsolidation.makeJobUpdateTasks(jcsWithConsolidation.getSourceToStoreMappings());
 
     assertThat(jobTasks, hasSize(0));
   }
 
   @Test
-  @SneakyThrows
-  public void shouldGroupJobsBySource() {
+  public void shouldGroupJobsBySource() throws InvalidProtocolBufferException {
     Store store =
-            DataGenerator.createStore(
-                    "test", Store.StoreType.REDIS, ImmutableList.of(Triple.of("project1", "*", false)));
+        DataGenerator.createStore(
+            "test", Store.StoreType.REDIS, ImmutableList.of(Triple.of("project1", "*", false)));
 
     Source source1 = DataGenerator.createSource("servers:9092", "topic");
     Source source2 = DataGenerator.createSource("others.servers:9092", "topic");
@@ -158,15 +156,15 @@ public class JobCoordinatorServiceTest {
 
     when(specService.listFeatureSets(
             Filter.newBuilder().setFeatureSetName("*").setProject("project1").build()))
-            .thenReturn(
-                    ListFeatureSetsResponse.newBuilder()
-                            .addAllFeatureSets(Lists.newArrayList(featureSet1, featureSet2))
-                            .build());
+        .thenReturn(
+            ListFeatureSetsResponse.newBuilder()
+                .addAllFeatureSets(Lists.newArrayList(featureSet1, featureSet2))
+                .build());
     when(specService.listStores(any()))
-            .thenReturn(ListStoresResponse.newBuilder().addStore(store).build());
+        .thenReturn(ListStoresResponse.newBuilder().addStore(store).build());
 
     ArrayList<Pair<Source, Set<Store>>> pairs =
-            Lists.newArrayList(jcsWithConsolidation.getSourceToStoreMappings());
+        Lists.newArrayList(jcsWithConsolidation.getSourceToStoreMappings());
 
     assertThat(pairs, hasSize(2));
     assertThat(pairs, hasItem(Pair.of(source1, Sets.newHashSet(store))));
@@ -174,15 +172,14 @@ public class JobCoordinatorServiceTest {
   }
 
   @Test
-  @SneakyThrows
-  public void shouldUseStoreSubscriptionToMapStore() {
+  public void shouldUseStoreSubscriptionToMapStore() throws InvalidProtocolBufferException {
     Store store1 =
-            DataGenerator.createStore(
-                    "test", Store.StoreType.REDIS, ImmutableList.of(Triple.of("*", "features1", false)));
+        DataGenerator.createStore(
+            "test", Store.StoreType.REDIS, ImmutableList.of(Triple.of("*", "features1", false)));
 
     Store store2 =
-            DataGenerator.createStore(
-                    "test", Store.StoreType.REDIS, ImmutableList.of(Triple.of("*", "features2", false)));
+        DataGenerator.createStore(
+            "test", Store.StoreType.REDIS, ImmutableList.of(Triple.of("*", "features2", false)));
 
     Source source1 = DataGenerator.createSource("servers:9092", "topic");
     Source source2 = DataGenerator.createSource("other.servers:9092", "topic");
@@ -192,23 +189,23 @@ public class JobCoordinatorServiceTest {
 
     when(specService.listFeatureSets(
             Filter.newBuilder().setFeatureSetName("features1").setProject("*").build()))
-            .thenReturn(
-                    ListFeatureSetsResponse.newBuilder()
-                            .addAllFeatureSets(Lists.newArrayList(featureSet1))
-                            .build());
+        .thenReturn(
+            ListFeatureSetsResponse.newBuilder()
+                .addAllFeatureSets(Lists.newArrayList(featureSet1))
+                .build());
 
     when(specService.listFeatureSets(
             Filter.newBuilder().setFeatureSetName("features2").setProject("*").build()))
-            .thenReturn(
-                    ListFeatureSetsResponse.newBuilder()
-                            .addAllFeatureSets(Lists.newArrayList(featureSet2))
-                            .build());
+        .thenReturn(
+            ListFeatureSetsResponse.newBuilder()
+                .addAllFeatureSets(Lists.newArrayList(featureSet2))
+                .build());
 
     when(specService.listStores(any()))
-            .thenReturn(ListStoresResponse.newBuilder().addStore(store1).addStore(store2).build());
+        .thenReturn(ListStoresResponse.newBuilder().addStore(store1).addStore(store2).build());
 
     ArrayList<Pair<Source, Set<Store>>> pairs =
-            Lists.newArrayList(jcsWithConsolidation.getSourceToStoreMappings());
+        Lists.newArrayList(jcsWithConsolidation.getSourceToStoreMappings());
 
     assertThat(pairs, hasSize(2));
     assertThat(pairs, hasItem(Pair.of(source1, Sets.newHashSet(store1))));
@@ -221,19 +218,19 @@ public class JobCoordinatorServiceTest {
     Store store = DataGenerator.getDefaultStore();
 
     Job job =
-            Job.builder()
-                    .setSource(source)
-                    .setStores(ImmutableMap.of(store.getName(), store))
-                    .setId("some-id")
-                    .build();
+        Job.builder()
+            .setSource(source)
+            .setStores(ImmutableMap.of(store.getName(), store))
+            .setId("some-id")
+            .build();
     job.setStatus(JobStatus.ABORTING);
     job.setExtId("extId");
 
     jobRepository.add(job);
 
     List<JobTask> tasks =
-            jcsWithConsolidation.makeJobUpdateTasks(
-                    ImmutableList.of(Pair.of(source, ImmutableSet.of(store))));
+        jcsWithConsolidation.makeJobUpdateTasks(
+            ImmutableList.of(Pair.of(source, ImmutableSet.of(store))));
 
     assertThat("CheckStatus is expected", tasks.get(0) instanceof UpdateJobStatusTask);
   }
@@ -251,25 +248,24 @@ public class JobCoordinatorServiceTest {
     jobRepository.add(job);
 
     List<JobTask> tasks =
-            jcsWithConsolidation.makeJobUpdateTasks(
-                    ImmutableList.of(Pair.of(source, ImmutableSet.of(store))));
+        jcsWithConsolidation.makeJobUpdateTasks(
+            ImmutableList.of(Pair.of(source, ImmutableSet.of(store))));
 
     assertThat("CreateTask is expected", tasks.get(0) instanceof CreateJobTask);
   }
 
   @Test
-  @SneakyThrows
-  public void shouldCreateJobIfNoRunning() {
+  public void shouldCreateJobIfNoRunning() throws InvalidProtocolBufferException {
     Source source = DataGenerator.createSource("kafka:9092", "topic");
     Store store = DataGenerator.getDefaultStore();
 
     when(specService.listFeatureSets(
             Filter.newBuilder().setFeatureSetName("*").setProject("*").build()))
-            .thenReturn(ListFeatureSetsResponse.newBuilder().build());
+        .thenReturn(ListFeatureSetsResponse.newBuilder().build());
 
     List<JobTask> tasks =
-            jcsWithConsolidation.makeJobUpdateTasks(
-                    ImmutableList.of(Pair.of(source, ImmutableSet.of(store))));
+        jcsWithConsolidation.makeJobUpdateTasks(
+            ImmutableList.of(Pair.of(source, ImmutableSet.of(store))));
 
     assertThat("CreateTask is expected", tasks.get(0) instanceof CreateJobTask);
   }
@@ -277,11 +273,11 @@ public class JobCoordinatorServiceTest {
   @Test
   public void shouldCreateJobPerStore() throws InvalidProtocolBufferException {
     Store store1 =
-            DataGenerator.createStore(
-                    "test-1", Store.StoreType.REDIS, ImmutableList.of(Triple.of("*", "*", false)));
+        DataGenerator.createStore(
+            "test-1", Store.StoreType.REDIS, ImmutableList.of(Triple.of("*", "*", false)));
     Store store2 =
-            DataGenerator.createStore(
-                    "test-2", Store.StoreType.REDIS, ImmutableList.of(Triple.of("*", "*", false)));
+        DataGenerator.createStore(
+            "test-2", Store.StoreType.REDIS, ImmutableList.of(Triple.of("*", "*", false)));
 
     Source source = DataGenerator.createSource("servers:9092", "topic");
 
@@ -289,53 +285,53 @@ public class JobCoordinatorServiceTest {
 
     when(specService.listFeatureSets(
             Filter.newBuilder().setFeatureSetName("*").setProject("*").build()))
-            .thenReturn(
-                    ListFeatureSetsResponse.newBuilder()
-                            .addAllFeatureSets(Lists.newArrayList(featureSet))
-                            .build());
+        .thenReturn(
+            ListFeatureSetsResponse.newBuilder()
+                .addAllFeatureSets(Lists.newArrayList(featureSet))
+                .build());
     when(specService.listStores(any()))
-            .thenReturn(ListStoresResponse.newBuilder().addStore(store1).addStore(store2).build());
+        .thenReturn(ListStoresResponse.newBuilder().addStore(store1).addStore(store2).build());
 
     List<JobTask> jobTasks =
-            jcsWithJobPerStore.makeJobUpdateTasks(jcsWithJobPerStore.getSourceToStoreMappings());
+        jcsWithJobPerStore.makeJobUpdateTasks(jcsWithJobPerStore.getSourceToStoreMappings());
 
     int hash =
-            Objects.hash(
-                    source.getKafkaSourceConfig().getBootstrapServers(),
-                    source.getKafkaSourceConfig().getTopic());
+        Objects.hash(
+            source.getKafkaSourceConfig().getBootstrapServers(),
+            source.getKafkaSourceConfig().getTopic());
 
     assertThat(jobTasks, hasSize(2));
     assertThat(
-            jobTasks,
-            hasItem(
-                    hasProperty(
-                            "job",
-                            hasProperty("id", containsString(String.format("kafka-%d-to-test-1", hash))))));
+        jobTasks,
+        hasItem(
+            hasProperty(
+                "job",
+                hasProperty("id", containsString(String.format("kafka-%d-to-test-1", hash))))));
     assertThat(
-            jobTasks,
-            hasItem(
-                    hasProperty(
-                            "job",
-                            hasProperty("id", containsString(String.format("kafka-%d-to-test-2", hash))))));
+        jobTasks,
+        hasItem(
+            hasProperty(
+                "job",
+                hasProperty("id", containsString(String.format("kafka-%d-to-test-2", hash))))));
   }
 
   @Test
   public void shouldCloneRunningJobOnUpgrade() throws InvalidProtocolBufferException {
     Store store1 =
-            DataGenerator.createStore(
-                    "test-1", Store.StoreType.REDIS, ImmutableList.of(Triple.of("*", "*", false)));
+        DataGenerator.createStore(
+            "test-1", Store.StoreType.REDIS, ImmutableList.of(Triple.of("*", "*", false)));
     Store store2 =
-            DataGenerator.createStore(
-                    "test-2", Store.StoreType.REDIS, ImmutableList.of(Triple.of("*", "*", false)));
+        DataGenerator.createStore(
+            "test-2", Store.StoreType.REDIS, ImmutableList.of(Triple.of("*", "*", false)));
 
     Source source = DataGenerator.createSource("servers:9092", "topic");
 
     Job existingJob =
-            Job.builder()
-                    .setId("some-id")
-                    .setSource(source)
-                    .setStores(ImmutableMap.of(store1.getName(), store1))
-                    .build();
+        Job.builder()
+            .setId("some-id")
+            .setSource(source)
+            .setStores(ImmutableMap.of(store1.getName(), store1))
+            .build();
 
     existingJob.setExtId("extId");
     existingJob.setStatus(JobStatus.RUNNING);
@@ -343,16 +339,16 @@ public class JobCoordinatorServiceTest {
     jobRepository.add(existingJob);
 
     List<JobTask> jobTasks =
-            jcsWithConsolidation.makeJobUpdateTasks(
-                    ImmutableList.of(Pair.of(source, ImmutableSet.of(store1, store2))));
+        jcsWithConsolidation.makeJobUpdateTasks(
+            ImmutableList.of(Pair.of(source, ImmutableSet.of(store1, store2))));
 
     assertThat(jobTasks, hasSize(1));
     assertThat(jobTasks, hasItem(isA(CreateJobTask.class)));
   }
 
   @Test
-  @SneakyThrows
-  public void shouldSelectOnlyFeatureSetsThatJobManagerSubscribedTo() {
+  public void shouldSelectOnlyFeatureSetsThatJobManagerSubscribedTo()
+      throws InvalidProtocolBufferException {
     Store store = DataGenerator.getDefaultStore();
     Source source = DataGenerator.getDefaultSource();
 
@@ -362,28 +358,27 @@ public class JobCoordinatorServiceTest {
 
     when(specService.listFeatureSets(
             Filter.newBuilder().setFeatureSetName("*").setProject("*").build()))
-            .thenReturn(
-                    ListFeatureSetsResponse.newBuilder()
-                            .addAllFeatureSets(Lists.newArrayList(featureSet1, featureSet2, featureSet3))
-                            .build());
+        .thenReturn(
+            ListFeatureSetsResponse.newBuilder()
+                .addAllFeatureSets(Lists.newArrayList(featureSet1, featureSet2, featureSet3))
+                .build());
 
     List<FeatureSet> featureSetsForStore = jcsWithConsolidation.getFeatureSetsForStore(store);
     assertThat(featureSetsForStore, containsInAnyOrder(featureSet1, featureSet2));
   }
 
   @Test
-  @SneakyThrows
-  public void shouldSelectOnlyStoresThatNotBlacklisted() {
+  public void shouldSelectOnlyStoresThatNotBlacklisted() throws InvalidProtocolBufferException {
     Store store1 =
-            DataGenerator.createStore(
-                    "normal-store",
-                    Store.StoreType.REDIS,
-                    ImmutableList.of(Triple.of("project1", "*", false)));
+        DataGenerator.createStore(
+            "normal-store",
+            Store.StoreType.REDIS,
+            ImmutableList.of(Triple.of("project1", "*", false)));
     Store store2 =
-            DataGenerator.createStore(
-                    "blacklisted-store",
-                    Store.StoreType.REDIS,
-                    ImmutableList.of(Triple.of("project2", "*", false)));
+        DataGenerator.createStore(
+            "blacklisted-store",
+            Store.StoreType.REDIS,
+            ImmutableList.of(Triple.of("project2", "*", false)));
 
     Source source1 = DataGenerator.createSource("source-1", "topic");
     Source source2 = DataGenerator.createSource("source-2", "topic");
@@ -392,18 +387,18 @@ public class JobCoordinatorServiceTest {
     FeatureSet featureSet2 = DataGenerator.createFeatureSet(source2, "project", "fs3");
 
     when(specService.listStores(any()))
-            .thenReturn(ListStoresResponse.newBuilder().addStore(store1).addStore(store2).build());
+        .thenReturn(ListStoresResponse.newBuilder().addStore(store1).addStore(store2).build());
 
     when(specService.listFeatureSets(
             Filter.newBuilder().setProject("project1").setFeatureSetName("*").build()))
-            .thenReturn(ListFeatureSetsResponse.newBuilder().addFeatureSets(featureSet1).build());
+        .thenReturn(ListFeatureSetsResponse.newBuilder().addFeatureSets(featureSet1).build());
 
     when(specService.listFeatureSets(
             Filter.newBuilder().setProject("project2").setFeatureSetName("*").build()))
-            .thenReturn(ListFeatureSetsResponse.newBuilder().addFeatureSets(featureSet2).build());
+        .thenReturn(ListFeatureSetsResponse.newBuilder().addFeatureSets(featureSet2).build());
 
     ArrayList<Pair<Source, Set<Store>>> pairs =
-            Lists.newArrayList(jcsWithConsolidation.getSourceToStoreMappings());
+        Lists.newArrayList(jcsWithConsolidation.getSourceToStoreMappings());
 
     assertThat(pairs, containsInAnyOrder(Pair.of(source1, ImmutableSet.of(store1))));
   }

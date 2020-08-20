@@ -105,8 +105,7 @@ public class JobCoordinatorIT extends BaseIT {
   }
 
   @Test
-  @SneakyThrows
-  public void shouldCreateJobForNewSource() {
+  public void shouldCreateJobForNewSource() throws InterruptedException {
     apiClient.simpleApplyFeatureSet(
         DataGenerator.createFeatureSet(DataGenerator.getDefaultSource(), "default", "test"));
 
@@ -180,8 +179,7 @@ public class JobCoordinatorIT extends BaseIT {
   }
 
   @Test
-  @SneakyThrows
-  public void shouldNotCreateJobForUnwantedFeatureSet() {
+  public void shouldNotCreateJobForUnwantedFeatureSet() throws InterruptedException {
     apiClient.simpleApplyFeatureSet(
         DataGenerator.createFeatureSet(DataGenerator.getDefaultSource(), "default", "other"));
 

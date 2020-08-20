@@ -28,8 +28,8 @@ dependencies {
   testImplementation 'org.mockito:mockito-core:2.28.2'
   testImplementation 'org.springframework.boot:spring-boot-starter-test:2.3.1.RELEASE'
 
-  compileOnly 'org.projectlombok:lombok:1.18.12'
-  annotationProcessor 'org.projectlombok:lombok:1.18.12'
+  compileOnly "org.projectlombok:lombok:${lombokVersion}"
+  annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
 
 openApiGenerate {

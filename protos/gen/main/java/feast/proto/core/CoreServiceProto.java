@@ -1680,6 +1680,27 @@ public final class CoreServiceProto {
 
       java.lang.String getLabelsOrThrow(
           java.lang.String key);
+
+      /**
+       * <pre>
+       * Filter by FeatureSet's current status
+       * Project and Feature Set name still must be specified (could be "*")
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetStatus status = 5;</code>
+       * @return The enum numeric value on the wire for status.
+       */
+      int getStatusValue();
+      /**
+       * <pre>
+       * Filter by FeatureSet's current status
+       * Project and Feature Set name still must be specified (could be "*")
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetStatus status = 5;</code>
+       * @return The status.
+       */
+      feast.proto.core.FeatureSetProto.FeatureSetStatus getStatus();
     }
     /**
      * Protobuf type {@code feast.core.ListFeatureSetsRequest.Filter}
@@ -1696,6 +1717,7 @@ public final class CoreServiceProto {
       private Filter() {
         project_ = "";
         featureSetName_ = "";
+        status_ = 0;
       }
 
       @java.lang.Override
@@ -1752,6 +1774,12 @@ public final class CoreServiceProto {
                     LabelsDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
                 labels_.getMutableMap().put(
                     labels__.getKey(), labels__.getValue());
+                break;
+              }
+              case 40: {
+                int rawValue = input.readEnum();
+
+                status_ = rawValue;
                 break;
               }
               default: {
@@ -2015,6 +2043,35 @@ public final class CoreServiceProto {
         return map.get(key);
       }
 
+      public static final int STATUS_FIELD_NUMBER = 5;
+      private int status_;
+      /**
+       * <pre>
+       * Filter by FeatureSet's current status
+       * Project and Feature Set name still must be specified (could be "*")
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetStatus status = 5;</code>
+       * @return The enum numeric value on the wire for status.
+       */
+      @java.lang.Override public int getStatusValue() {
+        return status_;
+      }
+      /**
+       * <pre>
+       * Filter by FeatureSet's current status
+       * Project and Feature Set name still must be specified (could be "*")
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetStatus status = 5;</code>
+       * @return The status.
+       */
+      @java.lang.Override public feast.proto.core.FeatureSetProto.FeatureSetStatus getStatus() {
+        @SuppressWarnings("deprecation")
+        feast.proto.core.FeatureSetProto.FeatureSetStatus result = feast.proto.core.FeatureSetProto.FeatureSetStatus.valueOf(status_);
+        return result == null ? feast.proto.core.FeatureSetProto.FeatureSetStatus.UNRECOGNIZED : result;
+      }
+
       private byte memoizedIsInitialized = -1;
       @java.lang.Override
       public final boolean isInitialized() {
@@ -2041,6 +2098,9 @@ public final class CoreServiceProto {
             internalGetLabels(),
             LabelsDefaultEntryHolder.defaultEntry,
             4);
+        if (status_ != feast.proto.core.FeatureSetProto.FeatureSetStatus.STATUS_INVALID.getNumber()) {
+          output.writeEnum(5, status_);
+        }
         unknownFields.writeTo(output);
       }
 
@@ -2066,6 +2126,10 @@ public final class CoreServiceProto {
           size += com.google.protobuf.CodedOutputStream
               .computeMessageSize(4, labels__);
         }
+        if (status_ != feast.proto.core.FeatureSetProto.FeatureSetStatus.STATUS_INVALID.getNumber()) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeEnumSize(5, status_);
+        }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
         return size;
@@ -2087,6 +2151,7 @@ public final class CoreServiceProto {
             .equals(other.getFeatureSetName())) return false;
         if (!internalGetLabels().equals(
             other.internalGetLabels())) return false;
+        if (status_ != other.status_) return false;
         if (!unknownFields.equals(other.unknownFields)) return false;
         return true;
       }
@@ -2106,6 +2171,8 @@ public final class CoreServiceProto {
           hash = (37 * hash) + LABELS_FIELD_NUMBER;
           hash = (53 * hash) + internalGetLabels().hashCode();
         }
+        hash = (37 * hash) + STATUS_FIELD_NUMBER;
+        hash = (53 * hash) + status_;
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
         return hash;
@@ -2266,6 +2333,8 @@ public final class CoreServiceProto {
           featureSetName_ = "";
 
           internalGetMutableLabels().clear();
+          status_ = 0;
+
           return this;
         }
 
@@ -2297,6 +2366,7 @@ public final class CoreServiceProto {
           result.featureSetName_ = featureSetName_;
           result.labels_ = internalGetLabels();
           result.labels_.makeImmutable();
+          result.status_ = status_;
           onBuilt();
           return result;
         }
@@ -2355,6 +2425,9 @@ public final class CoreServiceProto {
           }
           internalGetMutableLabels().mergeFrom(
               other.internalGetLabels());
+          if (other.status_ != 0) {
+            setStatusValue(other.getStatusValue());
+          }
           this.mergeUnknownFields(other.unknownFields);
           onChanged();
           return this;
@@ -2797,6 +2870,85 @@ public final class CoreServiceProto {
             java.util.Map<java.lang.String, java.lang.String> values) {
           internalGetMutableLabels().getMutableMap()
               .putAll(values);
+          return this;
+        }
+
+        private int status_ = 0;
+        /**
+         * <pre>
+         * Filter by FeatureSet's current status
+         * Project and Feature Set name still must be specified (could be "*")
+         * </pre>
+         *
+         * <code>.feast.core.FeatureSetStatus status = 5;</code>
+         * @return The enum numeric value on the wire for status.
+         */
+        @java.lang.Override public int getStatusValue() {
+          return status_;
+        }
+        /**
+         * <pre>
+         * Filter by FeatureSet's current status
+         * Project and Feature Set name still must be specified (could be "*")
+         * </pre>
+         *
+         * <code>.feast.core.FeatureSetStatus status = 5;</code>
+         * @param value The enum numeric value on the wire for status to set.
+         * @return This builder for chaining.
+         */
+        public Builder setStatusValue(int value) {
+          
+          status_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <pre>
+         * Filter by FeatureSet's current status
+         * Project and Feature Set name still must be specified (could be "*")
+         * </pre>
+         *
+         * <code>.feast.core.FeatureSetStatus status = 5;</code>
+         * @return The status.
+         */
+        @java.lang.Override
+        public feast.proto.core.FeatureSetProto.FeatureSetStatus getStatus() {
+          @SuppressWarnings("deprecation")
+          feast.proto.core.FeatureSetProto.FeatureSetStatus result = feast.proto.core.FeatureSetProto.FeatureSetStatus.valueOf(status_);
+          return result == null ? feast.proto.core.FeatureSetProto.FeatureSetStatus.UNRECOGNIZED : result;
+        }
+        /**
+         * <pre>
+         * Filter by FeatureSet's current status
+         * Project and Feature Set name still must be specified (could be "*")
+         * </pre>
+         *
+         * <code>.feast.core.FeatureSetStatus status = 5;</code>
+         * @param value The status to set.
+         * @return This builder for chaining.
+         */
+        public Builder setStatus(feast.proto.core.FeatureSetProto.FeatureSetStatus value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          
+          status_ = value.getNumber();
+          onChanged();
+          return this;
+        }
+        /**
+         * <pre>
+         * Filter by FeatureSet's current status
+         * Project and Feature Set name still must be specified (could be "*")
+         * </pre>
+         *
+         * <code>.feast.core.FeatureSetStatus status = 5;</code>
+         * @return This builder for chaining.
+         */
+        public Builder clearStatus() {
+          
+          status_ = 0;
+          onChanged();
           return this;
         }
         @java.lang.Override
@@ -23479,6 +23631,1248 @@ public final class CoreServiceProto {
 
   }
 
+  public interface UpdateFeatureSetStatusRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:feast.core.UpdateFeatureSetStatusRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * FeatureSetReference of FeatureSet to update
+     * </pre>
+     *
+     * <code>.feast.core.FeatureSetReference reference = 1;</code>
+     * @return Whether the reference field is set.
+     */
+    boolean hasReference();
+    /**
+     * <pre>
+     * FeatureSetReference of FeatureSet to update
+     * </pre>
+     *
+     * <code>.feast.core.FeatureSetReference reference = 1;</code>
+     * @return The reference.
+     */
+    feast.proto.core.FeatureSetReferenceProto.FeatureSetReference getReference();
+    /**
+     * <pre>
+     * FeatureSetReference of FeatureSet to update
+     * </pre>
+     *
+     * <code>.feast.core.FeatureSetReference reference = 1;</code>
+     */
+    feast.proto.core.FeatureSetReferenceProto.FeatureSetReferenceOrBuilder getReferenceOrBuilder();
+
+    /**
+     * <pre>
+     * Target status
+     * </pre>
+     *
+     * <code>.feast.core.FeatureSetStatus status = 2;</code>
+     * @return The enum numeric value on the wire for status.
+     */
+    int getStatusValue();
+    /**
+     * <pre>
+     * Target status
+     * </pre>
+     *
+     * <code>.feast.core.FeatureSetStatus status = 2;</code>
+     * @return The status.
+     */
+    feast.proto.core.FeatureSetProto.FeatureSetStatus getStatus();
+  }
+  /**
+   * Protobuf type {@code feast.core.UpdateFeatureSetStatusRequest}
+   */
+  public static final class UpdateFeatureSetStatusRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:feast.core.UpdateFeatureSetStatusRequest)
+      UpdateFeatureSetStatusRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use UpdateFeatureSetStatusRequest.newBuilder() to construct.
+    private UpdateFeatureSetStatusRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private UpdateFeatureSetStatusRequest() {
+      status_ = 0;
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new UpdateFeatureSetStatusRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private UpdateFeatureSetStatusRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder subBuilder = null;
+              if (reference_ != null) {
+                subBuilder = reference_.toBuilder();
+              }
+              reference_ = input.readMessage(feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(reference_);
+                reference_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 16: {
+              int rawValue = input.readEnum();
+
+              status_ = rawValue;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return feast.proto.core.CoreServiceProto.internal_static_feast_core_UpdateFeatureSetStatusRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return feast.proto.core.CoreServiceProto.internal_static_feast_core_UpdateFeatureSetStatusRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest.class, feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest.Builder.class);
+    }
+
+    public static final int REFERENCE_FIELD_NUMBER = 1;
+    private feast.proto.core.FeatureSetReferenceProto.FeatureSetReference reference_;
+    /**
+     * <pre>
+     * FeatureSetReference of FeatureSet to update
+     * </pre>
+     *
+     * <code>.feast.core.FeatureSetReference reference = 1;</code>
+     * @return Whether the reference field is set.
+     */
+    @java.lang.Override
+    public boolean hasReference() {
+      return reference_ != null;
+    }
+    /**
+     * <pre>
+     * FeatureSetReference of FeatureSet to update
+     * </pre>
+     *
+     * <code>.feast.core.FeatureSetReference reference = 1;</code>
+     * @return The reference.
+     */
+    @java.lang.Override
+    public feast.proto.core.FeatureSetReferenceProto.FeatureSetReference getReference() {
+      return reference_ == null ? feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.getDefaultInstance() : reference_;
+    }
+    /**
+     * <pre>
+     * FeatureSetReference of FeatureSet to update
+     * </pre>
+     *
+     * <code>.feast.core.FeatureSetReference reference = 1;</code>
+     */
+    @java.lang.Override
+    public feast.proto.core.FeatureSetReferenceProto.FeatureSetReferenceOrBuilder getReferenceOrBuilder() {
+      return getReference();
+    }
+
+    public static final int STATUS_FIELD_NUMBER = 2;
+    private int status_;
+    /**
+     * <pre>
+     * Target status
+     * </pre>
+     *
+     * <code>.feast.core.FeatureSetStatus status = 2;</code>
+     * @return The enum numeric value on the wire for status.
+     */
+    @java.lang.Override public int getStatusValue() {
+      return status_;
+    }
+    /**
+     * <pre>
+     * Target status
+     * </pre>
+     *
+     * <code>.feast.core.FeatureSetStatus status = 2;</code>
+     * @return The status.
+     */
+    @java.lang.Override public feast.proto.core.FeatureSetProto.FeatureSetStatus getStatus() {
+      @SuppressWarnings("deprecation")
+      feast.proto.core.FeatureSetProto.FeatureSetStatus result = feast.proto.core.FeatureSetProto.FeatureSetStatus.valueOf(status_);
+      return result == null ? feast.proto.core.FeatureSetProto.FeatureSetStatus.UNRECOGNIZED : result;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (reference_ != null) {
+        output.writeMessage(1, getReference());
+      }
+      if (status_ != feast.proto.core.FeatureSetProto.FeatureSetStatus.STATUS_INVALID.getNumber()) {
+        output.writeEnum(2, status_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (reference_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getReference());
+      }
+      if (status_ != feast.proto.core.FeatureSetProto.FeatureSetStatus.STATUS_INVALID.getNumber()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(2, status_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest)) {
+        return super.equals(obj);
+      }
+      feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest other = (feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest) obj;
+
+      if (hasReference() != other.hasReference()) return false;
+      if (hasReference()) {
+        if (!getReference()
+            .equals(other.getReference())) return false;
+      }
+      if (status_ != other.status_) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasReference()) {
+        hash = (37 * hash) + REFERENCE_FIELD_NUMBER;
+        hash = (53 * hash) + getReference().hashCode();
+      }
+      hash = (37 * hash) + STATUS_FIELD_NUMBER;
+      hash = (53 * hash) + status_;
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code feast.core.UpdateFeatureSetStatusRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:feast.core.UpdateFeatureSetStatusRequest)
+        feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return feast.proto.core.CoreServiceProto.internal_static_feast_core_UpdateFeatureSetStatusRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return feast.proto.core.CoreServiceProto.internal_static_feast_core_UpdateFeatureSetStatusRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest.class, feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest.Builder.class);
+      }
+
+      // Construct using feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (referenceBuilder_ == null) {
+          reference_ = null;
+        } else {
+          reference_ = null;
+          referenceBuilder_ = null;
+        }
+        status_ = 0;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return feast.proto.core.CoreServiceProto.internal_static_feast_core_UpdateFeatureSetStatusRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest getDefaultInstanceForType() {
+        return feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest build() {
+        feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest buildPartial() {
+        feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest result = new feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest(this);
+        if (referenceBuilder_ == null) {
+          result.reference_ = reference_;
+        } else {
+          result.reference_ = referenceBuilder_.build();
+        }
+        result.status_ = status_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest) {
+          return mergeFrom((feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest other) {
+        if (other == feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest.getDefaultInstance()) return this;
+        if (other.hasReference()) {
+          mergeReference(other.getReference());
+        }
+        if (other.status_ != 0) {
+          setStatusValue(other.getStatusValue());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private feast.proto.core.FeatureSetReferenceProto.FeatureSetReference reference_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          feast.proto.core.FeatureSetReferenceProto.FeatureSetReference, feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder, feast.proto.core.FeatureSetReferenceProto.FeatureSetReferenceOrBuilder> referenceBuilder_;
+      /**
+       * <pre>
+       * FeatureSetReference of FeatureSet to update
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetReference reference = 1;</code>
+       * @return Whether the reference field is set.
+       */
+      public boolean hasReference() {
+        return referenceBuilder_ != null || reference_ != null;
+      }
+      /**
+       * <pre>
+       * FeatureSetReference of FeatureSet to update
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetReference reference = 1;</code>
+       * @return The reference.
+       */
+      public feast.proto.core.FeatureSetReferenceProto.FeatureSetReference getReference() {
+        if (referenceBuilder_ == null) {
+          return reference_ == null ? feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.getDefaultInstance() : reference_;
+        } else {
+          return referenceBuilder_.getMessage();
+        }
+      }
+      /**
+       * <pre>
+       * FeatureSetReference of FeatureSet to update
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetReference reference = 1;</code>
+       */
+      public Builder setReference(feast.proto.core.FeatureSetReferenceProto.FeatureSetReference value) {
+        if (referenceBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          reference_ = value;
+          onChanged();
+        } else {
+          referenceBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       * FeatureSetReference of FeatureSet to update
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetReference reference = 1;</code>
+       */
+      public Builder setReference(
+          feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder builderForValue) {
+        if (referenceBuilder_ == null) {
+          reference_ = builderForValue.build();
+          onChanged();
+        } else {
+          referenceBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       * FeatureSetReference of FeatureSet to update
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetReference reference = 1;</code>
+       */
+      public Builder mergeReference(feast.proto.core.FeatureSetReferenceProto.FeatureSetReference value) {
+        if (referenceBuilder_ == null) {
+          if (reference_ != null) {
+            reference_ =
+              feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.newBuilder(reference_).mergeFrom(value).buildPartial();
+          } else {
+            reference_ = value;
+          }
+          onChanged();
+        } else {
+          referenceBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       * FeatureSetReference of FeatureSet to update
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetReference reference = 1;</code>
+       */
+      public Builder clearReference() {
+        if (referenceBuilder_ == null) {
+          reference_ = null;
+          onChanged();
+        } else {
+          reference_ = null;
+          referenceBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       * FeatureSetReference of FeatureSet to update
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetReference reference = 1;</code>
+       */
+      public feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder getReferenceBuilder() {
+        
+        onChanged();
+        return getReferenceFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       * FeatureSetReference of FeatureSet to update
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetReference reference = 1;</code>
+       */
+      public feast.proto.core.FeatureSetReferenceProto.FeatureSetReferenceOrBuilder getReferenceOrBuilder() {
+        if (referenceBuilder_ != null) {
+          return referenceBuilder_.getMessageOrBuilder();
+        } else {
+          return reference_ == null ?
+              feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.getDefaultInstance() : reference_;
+        }
+      }
+      /**
+       * <pre>
+       * FeatureSetReference of FeatureSet to update
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetReference reference = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          feast.proto.core.FeatureSetReferenceProto.FeatureSetReference, feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder, feast.proto.core.FeatureSetReferenceProto.FeatureSetReferenceOrBuilder> 
+          getReferenceFieldBuilder() {
+        if (referenceBuilder_ == null) {
+          referenceBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              feast.proto.core.FeatureSetReferenceProto.FeatureSetReference, feast.proto.core.FeatureSetReferenceProto.FeatureSetReference.Builder, feast.proto.core.FeatureSetReferenceProto.FeatureSetReferenceOrBuilder>(
+                  getReference(),
+                  getParentForChildren(),
+                  isClean());
+          reference_ = null;
+        }
+        return referenceBuilder_;
+      }
+
+      private int status_ = 0;
+      /**
+       * <pre>
+       * Target status
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetStatus status = 2;</code>
+       * @return The enum numeric value on the wire for status.
+       */
+      @java.lang.Override public int getStatusValue() {
+        return status_;
+      }
+      /**
+       * <pre>
+       * Target status
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetStatus status = 2;</code>
+       * @param value The enum numeric value on the wire for status to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStatusValue(int value) {
+        
+        status_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Target status
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetStatus status = 2;</code>
+       * @return The status.
+       */
+      @java.lang.Override
+      public feast.proto.core.FeatureSetProto.FeatureSetStatus getStatus() {
+        @SuppressWarnings("deprecation")
+        feast.proto.core.FeatureSetProto.FeatureSetStatus result = feast.proto.core.FeatureSetProto.FeatureSetStatus.valueOf(status_);
+        return result == null ? feast.proto.core.FeatureSetProto.FeatureSetStatus.UNRECOGNIZED : result;
+      }
+      /**
+       * <pre>
+       * Target status
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetStatus status = 2;</code>
+       * @param value The status to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStatus(feast.proto.core.FeatureSetProto.FeatureSetStatus value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        
+        status_ = value.getNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Target status
+       * </pre>
+       *
+       * <code>.feast.core.FeatureSetStatus status = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearStatus() {
+        
+        status_ = 0;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:feast.core.UpdateFeatureSetStatusRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:feast.core.UpdateFeatureSetStatusRequest)
+    private static final feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest();
+    }
+
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<UpdateFeatureSetStatusRequest>
+        PARSER = new com.google.protobuf.AbstractParser<UpdateFeatureSetStatusRequest>() {
+      @java.lang.Override
+      public UpdateFeatureSetStatusRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new UpdateFeatureSetStatusRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<UpdateFeatureSetStatusRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<UpdateFeatureSetStatusRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface UpdateFeatureSetStatusResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:feast.core.UpdateFeatureSetStatusResponse)
+      com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code feast.core.UpdateFeatureSetStatusResponse}
+   */
+  public static final class UpdateFeatureSetStatusResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:feast.core.UpdateFeatureSetStatusResponse)
+      UpdateFeatureSetStatusResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use UpdateFeatureSetStatusResponse.newBuilder() to construct.
+    private UpdateFeatureSetStatusResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private UpdateFeatureSetStatusResponse() {
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new UpdateFeatureSetStatusResponse();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private UpdateFeatureSetStatusResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return feast.proto.core.CoreServiceProto.internal_static_feast_core_UpdateFeatureSetStatusResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return feast.proto.core.CoreServiceProto.internal_static_feast_core_UpdateFeatureSetStatusResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse.class, feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse.Builder.class);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse)) {
+        return super.equals(obj);
+      }
+      feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse other = (feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse) obj;
+
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code feast.core.UpdateFeatureSetStatusResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:feast.core.UpdateFeatureSetStatusResponse)
+        feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return feast.proto.core.CoreServiceProto.internal_static_feast_core_UpdateFeatureSetStatusResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return feast.proto.core.CoreServiceProto.internal_static_feast_core_UpdateFeatureSetStatusResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse.class, feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse.Builder.class);
+      }
+
+      // Construct using feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return feast.proto.core.CoreServiceProto.internal_static_feast_core_UpdateFeatureSetStatusResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse getDefaultInstanceForType() {
+        return feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse build() {
+        feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse buildPartial() {
+        feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse result = new feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse(this);
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse) {
+          return mergeFrom((feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse other) {
+        if (other == feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:feast.core.UpdateFeatureSetStatusResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:feast.core.UpdateFeatureSetStatusResponse)
+    private static final feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse();
+    }
+
+    public static feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<UpdateFeatureSetStatusResponse>
+        PARSER = new com.google.protobuf.AbstractParser<UpdateFeatureSetStatusResponse>() {
+      @java.lang.Override
+      public UpdateFeatureSetStatusResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new UpdateFeatureSetStatusResponse(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<UpdateFeatureSetStatusResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<UpdateFeatureSetStatusResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_feast_core_GetFeatureSetRequest_descriptor;
   private static final 
@@ -23654,6 +25048,16 @@ public final class CoreServiceProto {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_feast_core_GetFeatureStatisticsResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_feast_core_UpdateFeatureSetStatusRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_feast_core_UpdateFeatureSetStatusRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_feast_core_UpdateFeatureSetStatusResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_feast_core_UpdateFeatureSetStatusResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -23672,101 +25076,110 @@ public final class CoreServiceProto {
       "roto\"5\n\024GetFeatureSetRequest\022\017\n\007project\030" +
       "\003 \001(\t\022\014\n\004name\030\001 \001(\t\"D\n\025GetFeatureSetResp" +
       "onse\022+\n\013feature_set\030\001 \001(\0132\026.feast.core.F" +
-      "eatureSet\"\377\001\n\026ListFeatureSetsRequest\0229\n\006" +
+      "eatureSet\"\255\002\n\026ListFeatureSetsRequest\0229\n\006" +
       "filter\030\001 \001(\0132).feast.core.ListFeatureSet" +
-      "sRequest.Filter\032\251\001\n\006Filter\022\017\n\007project\030\003 " +
+      "sRequest.Filter\032\327\001\n\006Filter\022\017\n\007project\030\003 " +
       "\001(\t\022\030\n\020feature_set_name\030\001 \001(\t\022E\n\006labels\030" +
       "\004 \003(\01325.feast.core.ListFeatureSetsReques" +
-      "t.Filter.LabelsEntry\032-\n\013LabelsEntry\022\013\n\003k" +
-      "ey\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"G\n\027ListFeatu" +
-      "reSetsResponse\022,\n\014feature_sets\030\001 \003(\0132\026.f" +
-      "east.core.FeatureSet\"\356\001\n\023ListFeaturesReq" +
-      "uest\0226\n\006filter\030\001 \001(\0132&.feast.core.ListFe" +
-      "aturesRequest.Filter\032\236\001\n\006Filter\022B\n\006label" +
-      "s\030\001 \003(\01322.feast.core.ListFeaturesRequest" +
-      ".Filter.LabelsEntry\022\020\n\010entities\030\002 \003(\t\022\017\n" +
-      "\007project\030\003 \001(\t\032-\n\013LabelsEntry\022\013\n\003key\030\001 \001" +
-      "(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\242\001\n\024ListFeaturesRe" +
-      "sponse\022@\n\010features\030\001 \003(\0132..feast.core.Li" +
-      "stFeaturesResponse.FeaturesEntry\032H\n\rFeat" +
-      "uresEntry\022\013\n\003key\030\001 \001(\t\022&\n\005value\030\002 \001(\0132\027." +
-      "feast.core.FeatureSpec:\0028\001\"a\n\021ListStores" +
-      "Request\0224\n\006filter\030\001 \001(\0132$.feast.core.Lis" +
-      "tStoresRequest.Filter\032\026\n\006Filter\022\014\n\004name\030" +
-      "\001 \001(\t\"6\n\022ListStoresResponse\022 \n\005store\030\001 \003" +
-      "(\0132\021.feast.core.Store\"E\n\026ApplyFeatureSet" +
-      "Request\022+\n\013feature_set\030\001 \001(\0132\026.feast.cor" +
-      "e.FeatureSet\"\300\001\n\027ApplyFeatureSetResponse" +
-      "\022+\n\013feature_set\030\001 \001(\0132\026.feast.core.Featu" +
-      "reSet\022:\n\006status\030\002 \001(\0162*.feast.core.Apply" +
-      "FeatureSetResponse.Status\"<\n\006Status\022\r\n\tN" +
-      "O_CHANGE\020\000\022\013\n\007CREATED\020\001\022\t\n\005ERROR\020\002\022\013\n\007UP" +
-      "DATED\020\003\"\034\n\032GetFeastCoreVersionRequest\".\n" +
-      "\033GetFeastCoreVersionResponse\022\017\n\007version\030" +
-      "\001 \001(\t\"6\n\022UpdateStoreRequest\022 \n\005store\030\001 \001" +
-      "(\0132\021.feast.core.Store\"\225\001\n\023UpdateStoreRes" +
-      "ponse\022 \n\005store\030\001 \001(\0132\021.feast.core.Store\022" +
-      "6\n\006status\030\002 \001(\0162&.feast.core.UpdateStore" +
-      "Response.Status\"$\n\006Status\022\r\n\tNO_CHANGE\020\000" +
-      "\022\013\n\007UPDATED\020\001\"$\n\024CreateProjectRequest\022\014\n" +
-      "\004name\030\001 \001(\t\"\027\n\025CreateProjectResponse\"%\n\025" +
-      "ArchiveProjectRequest\022\014\n\004name\030\001 \001(\t\"\030\n\026A" +
-      "rchiveProjectResponse\"\025\n\023ListProjectsReq" +
-      "uest\"(\n\024ListProjectsResponse\022\020\n\010projects" +
-      "\030\001 \003(\t\"\301\001\n\030ListIngestionJobsRequest\022;\n\006f" +
-      "ilter\030\001 \001(\0132+.feast.core.ListIngestionJo" +
-      "bsRequest.Filter\032h\n\006Filter\022\n\n\002id\030\001 \001(\t\022>" +
-      "\n\025feature_set_reference\030\002 \001(\0132\037.feast.co" +
-      "re.FeatureSetReference\022\022\n\nstore_name\030\003 \001" +
-      "(\t\"C\n\031ListIngestionJobsResponse\022&\n\004jobs\030" +
-      "\001 \003(\0132\030.feast.core.IngestionJob\"(\n\032Resta" +
-      "rtIngestionJobRequest\022\n\n\002id\030\001 \001(\t\"\035\n\033Res" +
-      "tartIngestionJobResponse\"%\n\027StopIngestio" +
-      "nJobRequest\022\n\n\002id\030\001 \001(\t\"\032\n\030StopIngestion" +
-      "JobResponse\"\342\001\n\033GetFeatureStatisticsRequ" +
-      "est\022\026\n\016feature_set_id\030\001 \001(\t\022\020\n\010features\030" +
-      "\002 \003(\t\022\r\n\005store\030\003 \001(\t\022.\n\nstart_date\030\004 \001(\013" +
-      "2\032.google.protobuf.Timestamp\022,\n\010end_date" +
-      "\030\005 \001(\0132\032.google.protobuf.Timestamp\022\025\n\rin" +
-      "gestion_ids\030\006 \003(\t\022\025\n\rforce_refresh\030\007 \001(\010" +
-      "\"}\n\034GetFeatureStatisticsResponse\022]\n\037data" +
-      "set_feature_statistics_list\030\001 \001(\01324.tens" +
-      "orflow.metadata.v0.DatasetFeatureStatist" +
-      "icsList2\211\n\n\013CoreService\022f\n\023GetFeastCoreV" +
-      "ersion\022&.feast.core.GetFeastCoreVersionR" +
-      "equest\032\'.feast.core.GetFeastCoreVersionR" +
-      "esponse\022T\n\rGetFeatureSet\022 .feast.core.Ge" +
-      "tFeatureSetRequest\032!.feast.core.GetFeatu" +
-      "reSetResponse\022Z\n\017ListFeatureSets\022\".feast" +
-      ".core.ListFeatureSetsRequest\032#.feast.cor" +
-      "e.ListFeatureSetsResponse\022Q\n\014ListFeature" +
-      "s\022\037.feast.core.ListFeaturesRequest\032 .fea" +
-      "st.core.ListFeaturesResponse\022i\n\024GetFeatu" +
-      "reStatistics\022\'.feast.core.GetFeatureStat" +
-      "isticsRequest\032(.feast.core.GetFeatureSta" +
-      "tisticsResponse\022K\n\nListStores\022\035.feast.co" +
-      "re.ListStoresRequest\032\036.feast.core.ListSt" +
-      "oresResponse\022Z\n\017ApplyFeatureSet\022\".feast." +
-      "core.ApplyFeatureSetRequest\032#.feast.core" +
-      ".ApplyFeatureSetResponse\022N\n\013UpdateStore\022" +
-      "\036.feast.core.UpdateStoreRequest\032\037.feast." +
-      "core.UpdateStoreResponse\022T\n\rCreateProjec" +
-      "t\022 .feast.core.CreateProjectRequest\032!.fe" +
-      "ast.core.CreateProjectResponse\022W\n\016Archiv" +
-      "eProject\022!.feast.core.ArchiveProjectRequ" +
-      "est\032\".feast.core.ArchiveProjectResponse\022" +
-      "Q\n\014ListProjects\022\037.feast.core.ListProject" +
-      "sRequest\032 .feast.core.ListProjectsRespon" +
-      "se\022`\n\021ListIngestionJobs\022$.feast.core.Lis" +
-      "tIngestionJobsRequest\032%.feast.core.ListI" +
-      "ngestionJobsResponse\022f\n\023RestartIngestion" +
-      "Job\022&.feast.core.RestartIngestionJobRequ" +
-      "est\032\'.feast.core.RestartIngestionJobResp" +
-      "onse\022]\n\020StopIngestionJob\022#.feast.core.St" +
-      "opIngestionJobRequest\032$.feast.core.StopI" +
-      "ngestionJobResponseBY\n\020feast.proto.coreB" +
-      "\020CoreServiceProtoZ3github.com/feast-dev/" +
-      "feast/sdk/go/protos/feast/coreb\006proto3"
+      "t.Filter.LabelsEntry\022,\n\006status\030\005 \001(\0162\034.f" +
+      "east.core.FeatureSetStatus\032-\n\013LabelsEntr" +
+      "y\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"G\n\027Lis" +
+      "tFeatureSetsResponse\022,\n\014feature_sets\030\001 \003" +
+      "(\0132\026.feast.core.FeatureSet\"\356\001\n\023ListFeatu" +
+      "resRequest\0226\n\006filter\030\001 \001(\0132&.feast.core." +
+      "ListFeaturesRequest.Filter\032\236\001\n\006Filter\022B\n" +
+      "\006labels\030\001 \003(\01322.feast.core.ListFeaturesR" +
+      "equest.Filter.LabelsEntry\022\020\n\010entities\030\002 " +
+      "\003(\t\022\017\n\007project\030\003 \001(\t\032-\n\013LabelsEntry\022\013\n\003k" +
+      "ey\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\242\001\n\024ListFeat" +
+      "uresResponse\022@\n\010features\030\001 \003(\0132..feast.c" +
+      "ore.ListFeaturesResponse.FeaturesEntry\032H" +
+      "\n\rFeaturesEntry\022\013\n\003key\030\001 \001(\t\022&\n\005value\030\002 " +
+      "\001(\0132\027.feast.core.FeatureSpec:\0028\001\"a\n\021List" +
+      "StoresRequest\0224\n\006filter\030\001 \001(\0132$.feast.co" +
+      "re.ListStoresRequest.Filter\032\026\n\006Filter\022\014\n" +
+      "\004name\030\001 \001(\t\"6\n\022ListStoresResponse\022 \n\005sto" +
+      "re\030\001 \003(\0132\021.feast.core.Store\"E\n\026ApplyFeat" +
+      "ureSetRequest\022+\n\013feature_set\030\001 \001(\0132\026.fea" +
+      "st.core.FeatureSet\"\300\001\n\027ApplyFeatureSetRe" +
+      "sponse\022+\n\013feature_set\030\001 \001(\0132\026.feast.core" +
+      ".FeatureSet\022:\n\006status\030\002 \001(\0162*.feast.core" +
+      ".ApplyFeatureSetResponse.Status\"<\n\006Statu" +
+      "s\022\r\n\tNO_CHANGE\020\000\022\013\n\007CREATED\020\001\022\t\n\005ERROR\020\002" +
+      "\022\013\n\007UPDATED\020\003\"\034\n\032GetFeastCoreVersionRequ" +
+      "est\".\n\033GetFeastCoreVersionResponse\022\017\n\007ve" +
+      "rsion\030\001 \001(\t\"6\n\022UpdateStoreRequest\022 \n\005sto" +
+      "re\030\001 \001(\0132\021.feast.core.Store\"\225\001\n\023UpdateSt" +
+      "oreResponse\022 \n\005store\030\001 \001(\0132\021.feast.core." +
+      "Store\0226\n\006status\030\002 \001(\0162&.feast.core.Updat" +
+      "eStoreResponse.Status\"$\n\006Status\022\r\n\tNO_CH" +
+      "ANGE\020\000\022\013\n\007UPDATED\020\001\"$\n\024CreateProjectRequ" +
+      "est\022\014\n\004name\030\001 \001(\t\"\027\n\025CreateProjectRespon" +
+      "se\"%\n\025ArchiveProjectRequest\022\014\n\004name\030\001 \001(" +
+      "\t\"\030\n\026ArchiveProjectResponse\"\025\n\023ListProje" +
+      "ctsRequest\"(\n\024ListProjectsResponse\022\020\n\010pr" +
+      "ojects\030\001 \003(\t\"\301\001\n\030ListIngestionJobsReques" +
+      "t\022;\n\006filter\030\001 \001(\0132+.feast.core.ListInges" +
+      "tionJobsRequest.Filter\032h\n\006Filter\022\n\n\002id\030\001" +
+      " \001(\t\022>\n\025feature_set_reference\030\002 \001(\0132\037.fe" +
+      "ast.core.FeatureSetReference\022\022\n\nstore_na" +
+      "me\030\003 \001(\t\"C\n\031ListIngestionJobsResponse\022&\n" +
+      "\004jobs\030\001 \003(\0132\030.feast.core.IngestionJob\"(\n" +
+      "\032RestartIngestionJobRequest\022\n\n\002id\030\001 \001(\t\"" +
+      "\035\n\033RestartIngestionJobResponse\"%\n\027StopIn" +
+      "gestionJobRequest\022\n\n\002id\030\001 \001(\t\"\032\n\030StopIng" +
+      "estionJobResponse\"\342\001\n\033GetFeatureStatisti" +
+      "csRequest\022\026\n\016feature_set_id\030\001 \001(\t\022\020\n\010fea" +
+      "tures\030\002 \003(\t\022\r\n\005store\030\003 \001(\t\022.\n\nstart_date" +
+      "\030\004 \001(\0132\032.google.protobuf.Timestamp\022,\n\010en" +
+      "d_date\030\005 \001(\0132\032.google.protobuf.Timestamp" +
+      "\022\025\n\ringestion_ids\030\006 \003(\t\022\025\n\rforce_refresh" +
+      "\030\007 \001(\010\"}\n\034GetFeatureStatisticsResponse\022]" +
+      "\n\037dataset_feature_statistics_list\030\001 \001(\0132" +
+      "4.tensorflow.metadata.v0.DatasetFeatureS" +
+      "tatisticsList\"\201\001\n\035UpdateFeatureSetStatus" +
+      "Request\0222\n\treference\030\001 \001(\0132\037.feast.core." +
+      "FeatureSetReference\022,\n\006status\030\002 \001(\0162\034.fe" +
+      "ast.core.FeatureSetStatus\" \n\036UpdateFeatu" +
+      "reSetStatusResponse2\372\n\n\013CoreService\022f\n\023G" +
+      "etFeastCoreVersion\022&.feast.core.GetFeast" +
+      "CoreVersionRequest\032\'.feast.core.GetFeast" +
+      "CoreVersionResponse\022T\n\rGetFeatureSet\022 .f" +
+      "east.core.GetFeatureSetRequest\032!.feast.c" +
+      "ore.GetFeatureSetResponse\022Z\n\017ListFeature" +
+      "Sets\022\".feast.core.ListFeatureSetsRequest" +
+      "\032#.feast.core.ListFeatureSetsResponse\022Q\n" +
+      "\014ListFeatures\022\037.feast.core.ListFeaturesR" +
+      "equest\032 .feast.core.ListFeaturesResponse" +
+      "\022i\n\024GetFeatureStatistics\022\'.feast.core.Ge" +
+      "tFeatureStatisticsRequest\032(.feast.core.G" +
+      "etFeatureStatisticsResponse\022K\n\nListStore" +
+      "s\022\035.feast.core.ListStoresRequest\032\036.feast" +
+      ".core.ListStoresResponse\022Z\n\017ApplyFeature" +
+      "Set\022\".feast.core.ApplyFeatureSetRequest\032" +
+      "#.feast.core.ApplyFeatureSetResponse\022N\n\013" +
+      "UpdateStore\022\036.feast.core.UpdateStoreRequ" +
+      "est\032\037.feast.core.UpdateStoreResponse\022T\n\r" +
+      "CreateProject\022 .feast.core.CreateProject" +
+      "Request\032!.feast.core.CreateProjectRespon" +
+      "se\022W\n\016ArchiveProject\022!.feast.core.Archiv" +
+      "eProjectRequest\032\".feast.core.ArchiveProj" +
+      "ectResponse\022Q\n\014ListProjects\022\037.feast.core" +
+      ".ListProjectsRequest\032 .feast.core.ListPr" +
+      "ojectsResponse\022`\n\021ListIngestionJobs\022$.fe" +
+      "ast.core.ListIngestionJobsRequest\032%.feas" +
+      "t.core.ListIngestionJobsResponse\022f\n\023Rest" +
+      "artIngestionJob\022&.feast.core.RestartInge" +
+      "stionJobRequest\032\'.feast.core.RestartInge" +
+      "stionJobResponse\022]\n\020StopIngestionJob\022#.f" +
+      "east.core.StopIngestionJobRequest\032$.feas" +
+      "t.core.StopIngestionJobResponse\022o\n\026Updat" +
+      "eFeatureSetStatus\022).feast.core.UpdateFea" +
+      "tureSetStatusRequest\032*.feast.core.Update" +
+      "FeatureSetStatusResponseBY\n\020feast.proto." +
+      "coreB\020CoreServiceProtoZ3github.com/feast" +
+      "-dev/feast/sdk/go/protos/feast/coreb\006pro" +
+      "to3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -23801,7 +25214,7 @@ public final class CoreServiceProto {
     internal_static_feast_core_ListFeatureSetsRequest_Filter_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_feast_core_ListFeatureSetsRequest_Filter_descriptor,
-        new java.lang.String[] { "Project", "FeatureSetName", "Labels", });
+        new java.lang.String[] { "Project", "FeatureSetName", "Labels", "Status", });
     internal_static_feast_core_ListFeatureSetsRequest_Filter_LabelsEntry_descriptor =
       internal_static_feast_core_ListFeatureSetsRequest_Filter_descriptor.getNestedTypes().get(0);
     internal_static_feast_core_ListFeatureSetsRequest_Filter_LabelsEntry_fieldAccessorTable = new
@@ -23988,6 +25401,18 @@ public final class CoreServiceProto {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_feast_core_GetFeatureStatisticsResponse_descriptor,
         new java.lang.String[] { "DatasetFeatureStatisticsList", });
+    internal_static_feast_core_UpdateFeatureSetStatusRequest_descriptor =
+      getDescriptor().getMessageTypes().get(28);
+    internal_static_feast_core_UpdateFeatureSetStatusRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_feast_core_UpdateFeatureSetStatusRequest_descriptor,
+        new java.lang.String[] { "Reference", "Status", });
+    internal_static_feast_core_UpdateFeatureSetStatusResponse_descriptor =
+      getDescriptor().getMessageTypes().get(29);
+    internal_static_feast_core_UpdateFeatureSetStatusResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_feast_core_UpdateFeatureSetStatusResponse_descriptor,
+        new java.lang.String[] { });
     com.google.protobuf.TimestampProto.getDescriptor();
     org.tensorflow.metadata.v0.Statistics.getDescriptor();
     feast.proto.core.FeatureSetProto.getDescriptor();

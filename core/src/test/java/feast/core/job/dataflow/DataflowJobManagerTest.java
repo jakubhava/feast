@@ -44,7 +44,6 @@ import feast.proto.core.StoreProto.Store.StoreType;
 import feast.proto.core.StoreProto.Store.Subscription;
 import java.io.IOException;
 import java.util.List;
-import lombok.SneakyThrows;
 import org.apache.beam.runners.dataflow.DataflowPipelineJob;
 import org.apache.beam.runners.dataflow.DataflowRunner;
 import org.apache.beam.sdk.PipelineResult.State;
@@ -213,8 +212,7 @@ public class DataflowJobManagerTest {
   }
 
   @Test
-  @SneakyThrows
-  public void shouldRetrieveRunningJobsFromDataflow() {
+  public void shouldRetrieveRunningJobsFromDataflow() throws IOException {
     when(dataflow
             .projects()
             .locations()
@@ -276,8 +274,7 @@ public class DataflowJobManagerTest {
   }
 
   @Test
-  @SneakyThrows
-  public void shouldHandleNullResponseFromDataflow() {
+  public void shouldHandleNullResponseFromDataflow() throws IOException {
     when(dataflow
             .projects()
             .locations()
@@ -292,8 +289,7 @@ public class DataflowJobManagerTest {
   }
 
   @Test
-  @SneakyThrows
-  public void shouldRetrieveRunningJobsWithoutLabels() {
+  public void shouldRetrieveRunningJobsWithoutLabels() throws IOException {
     when(dataflow
             .projects()
             .locations()

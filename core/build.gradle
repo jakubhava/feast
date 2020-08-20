@@ -68,9 +68,9 @@ dependencies {
   testImplementation 'org.awaitility:awaitility-proxy:3.0.0'
   compileOnly 'org.postgresql:postgresql:42.2.14'
 
-  compileOnly 'org.projectlombok:lombok:1.18.12'
-  testCompileOnly 'org.projectlombok:lombok:1.18.12'
-  annotationProcessor 'org.projectlombok:lombok:1.18.12'
+  compileOnly "org.projectlombok:lombok:${lombokVersion}"
+  testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+  annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
   compileOnly 'com.google.auto.value:auto-value-annotations:1.6.6'
   annotationProcessor 'com.google.auto.value:auto-value:1.6.6'

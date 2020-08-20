@@ -461,6 +461,37 @@ public final class CoreServiceGrpc {
     return getStopIngestionJobMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest,
+      feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse> getUpdateFeatureSetStatusMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "UpdateFeatureSetStatus",
+      requestType = feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest.class,
+      responseType = feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest,
+      feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse> getUpdateFeatureSetStatusMethod() {
+    io.grpc.MethodDescriptor<feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest, feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse> getUpdateFeatureSetStatusMethod;
+    if ((getUpdateFeatureSetStatusMethod = CoreServiceGrpc.getUpdateFeatureSetStatusMethod) == null) {
+      synchronized (CoreServiceGrpc.class) {
+        if ((getUpdateFeatureSetStatusMethod = CoreServiceGrpc.getUpdateFeatureSetStatusMethod) == null) {
+          CoreServiceGrpc.getUpdateFeatureSetStatusMethod = getUpdateFeatureSetStatusMethod =
+              io.grpc.MethodDescriptor.<feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest, feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "UpdateFeatureSetStatus"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new CoreServiceMethodDescriptorSupplier("UpdateFeatureSetStatus"))
+              .build();
+        }
+      }
+    }
+    return getUpdateFeatureSetStatusMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -681,6 +712,16 @@ public final class CoreServiceGrpc {
       asyncUnimplementedUnaryCall(getStopIngestionJobMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     * Internal API for Job Coordinator to update featureSet's status once responsible ingestion job is running
+     * </pre>
+     */
+    public void updateFeatureSetStatus(feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest request,
+        io.grpc.stub.StreamObserver<feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getUpdateFeatureSetStatusMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -781,6 +822,13 @@ public final class CoreServiceGrpc {
                 feast.proto.core.CoreServiceProto.StopIngestionJobRequest,
                 feast.proto.core.CoreServiceProto.StopIngestionJobResponse>(
                   this, METHODID_STOP_INGESTION_JOB)))
+          .addMethod(
+            getUpdateFeatureSetStatusMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest,
+                feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse>(
+                  this, METHODID_UPDATE_FEATURE_SET_STATUS)))
           .build();
     }
   }
@@ -984,6 +1032,17 @@ public final class CoreServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getStopIngestionJobMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * Internal API for Job Coordinator to update featureSet's status once responsible ingestion job is running
+     * </pre>
+     */
+    public void updateFeatureSetStatus(feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest request,
+        io.grpc.stub.StreamObserver<feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getUpdateFeatureSetStatusMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -1170,6 +1229,16 @@ public final class CoreServiceGrpc {
     public feast.proto.core.CoreServiceProto.StopIngestionJobResponse stopIngestionJob(feast.proto.core.CoreServiceProto.StopIngestionJobRequest request) {
       return blockingUnaryCall(
           getChannel(), getStopIngestionJobMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Internal API for Job Coordinator to update featureSet's status once responsible ingestion job is running
+     * </pre>
+     */
+    public feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse updateFeatureSetStatus(feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getUpdateFeatureSetStatusMethod(), getCallOptions(), request);
     }
   }
 
@@ -1372,6 +1441,17 @@ public final class CoreServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getStopIngestionJobMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * Internal API for Job Coordinator to update featureSet's status once responsible ingestion job is running
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse> updateFeatureSetStatus(
+        feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getUpdateFeatureSetStatusMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_FEAST_CORE_VERSION = 0;
@@ -1388,6 +1468,7 @@ public final class CoreServiceGrpc {
   private static final int METHODID_LIST_INGESTION_JOBS = 11;
   private static final int METHODID_RESTART_INGESTION_JOB = 12;
   private static final int METHODID_STOP_INGESTION_JOB = 13;
+  private static final int METHODID_UPDATE_FEATURE_SET_STATUS = 14;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1461,6 +1542,10 @@ public final class CoreServiceGrpc {
         case METHODID_STOP_INGESTION_JOB:
           serviceImpl.stopIngestionJob((feast.proto.core.CoreServiceProto.StopIngestionJobRequest) request,
               (io.grpc.stub.StreamObserver<feast.proto.core.CoreServiceProto.StopIngestionJobResponse>) responseObserver);
+          break;
+        case METHODID_UPDATE_FEATURE_SET_STATUS:
+          serviceImpl.updateFeatureSetStatus((feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusRequest) request,
+              (io.grpc.stub.StreamObserver<feast.proto.core.CoreServiceProto.UpdateFeatureSetStatusResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -1537,6 +1622,7 @@ public final class CoreServiceGrpc {
               .addMethod(getListIngestionJobsMethod())
               .addMethod(getRestartIngestionJobMethod())
               .addMethod(getStopIngestionJobMethod())
+              .addMethod(getUpdateFeatureSetStatusMethod())
               .build();
         }
       }
