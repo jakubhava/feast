@@ -20,23 +20,25 @@ import static feast.common.models.Store.isSubscribedToFeatureSet;
 import static feast.core.model.FeatureSet.parseReference;
 
 import com.google.common.collect.Sets;
+import com.google.protobuf.InvalidProtocolBufferException;
+import feast.common.models.FeatureSetReference;
 import feast.core.config.FeastProperties;
 import feast.core.config.FeastProperties.JobProperties;
-import feast.core.dao.FeatureSetJobStatusRepository;
-import feast.core.dao.FeatureSetRepository;
-import feast.core.dao.JobRepository;
 import feast.core.job.*;
 import feast.core.job.task.*;
-import feast.core.model.*;
-import feast.core.model.FeatureSet;
+import feast.core.model.FeatureSetDeliveryStatus;
 import feast.core.model.Job;
 import feast.core.model.JobStatus;
-import feast.core.model.Source;
-import feast.core.model.Store;
+import feast.proto.core.CoreServiceProto;
 import feast.proto.core.CoreServiceProto.ListStoresRequest.Filter;
 import feast.proto.core.CoreServiceProto.ListStoresResponse;
 import feast.proto.core.FeatureSetProto;
+import feast.proto.core.FeatureSetProto.FeatureSet;
+import feast.proto.core.FeatureSetProto.FeatureSetSpec;
+import feast.proto.core.FeatureSetReferenceProto;
 import feast.proto.core.IngestionJobProto;
+import feast.proto.core.SourceProto.Source;
+import feast.proto.core.StoreProto.Store;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -50,7 +52,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -58,34 +59,41 @@ import org.springframework.transaction.annotation.Transactional;
 public class JobCoordinatorService {
 
   private final int SPEC_PUBLISHING_TIMEOUT_SECONDS = 5;
+  public static final String VERSION_LABEL = "feast_version";
 
   private final JobRepository jobRepository;
-  private final FeatureSetRepository featureSetRepository;
-  private final FeatureSetJobStatusRepository jobStatusRepository;
   private final SpecService specService;
   private final JobManager jobManager;
   private final JobProperties jobProperties;
   private final JobGroupingStrategy groupingStrategy;
-  private final KafkaTemplate<String, FeatureSetProto.FeatureSetSpec> specPublisher;
+  private final KafkaTemplate<String, FeatureSetSpec> specPublisher;
+  private final List<Store.Subscription> featureSetSubscriptions;
+  private final List<String> whitelistedStores;
+  private final Map<String, String> jobLabels;
+  private final String currentVersion;
 
   @Autowired
   public JobCoordinatorService(
       JobRepository jobRepository,
-      FeatureSetRepository featureSetRepository,
-      FeatureSetJobStatusRepository jobStatusRepository,
       SpecService specService,
       JobManager jobManager,
       FeastProperties feastProperties,
       JobGroupingStrategy groupingStrategy,
-      KafkaTemplate<String, FeatureSetProto.FeatureSetSpec> specPublisher) {
+      KafkaTemplate<String, FeatureSetSpec> specPublisher) {
     this.jobRepository = jobRepository;
-    this.featureSetRepository = featureSetRepository;
-    this.jobStatusRepository = jobStatusRepository;
     this.specService = specService;
     this.jobManager = jobManager;
     this.jobProperties = feastProperties.getJobs();
     this.specPublisher = specPublisher;
     this.groupingStrategy = groupingStrategy;
+    this.featureSetSubscriptions =
+        feastProperties.getJobs().getCoordinator().getFeatureSetSelector().stream()
+            .map(JobProperties.CoordinatorProperties.FeatureSetSelector::toSubscription)
+            .collect(Collectors.toList());
+    this.whitelistedStores = feastProperties.getJobs().getCoordinator().getWhitelistedStores();
+    this.currentVersion = feastProperties.getVersion();
+    this.jobLabels = new HashMap<>(feastProperties.getJobs().getCoordinator().getJobSelector());
+    this.jobLabels.put(VERSION_LABEL, this.currentVersion);
   }
 
   /**
@@ -99,7 +107,6 @@ public class JobCoordinatorService {
    *
    * <p>4) Updates Feature set statuses
    */
-  @Transactional
   @Scheduled(fixedDelayString = "${feast.jobs.polling_interval_milliseconds}")
   public void Poll() {
     log.info("Polling for new jobs...");
@@ -121,12 +128,12 @@ public class JobCoordinatorService {
     tasks.forEach(ecs::submit);
 
     int completedTasks = 0;
-    List<Job> startedJobs = new ArrayList<>();
+    List<Job> processedJobs = new ArrayList<>();
     while (completedTasks < tasks.size()) {
       try {
         Job job = ecs.take().get(jobProperties.getJobUpdateTimeoutSeconds(), TimeUnit.SECONDS);
         if (job != null) {
-          startedJobs.add(job);
+          processedJobs.add(job);
         }
       } catch (ExecutionException | InterruptedException | TimeoutException e) {
         log.warn("Unable to start or update job: {}", e.getMessage());
@@ -134,7 +141,7 @@ public class JobCoordinatorService {
       }
       completedTasks++;
     }
-    jobRepository.saveAll(startedJobs);
+    processedJobs.forEach(jobRepository::add);
     executorService.shutdown();
   }
 
@@ -160,7 +167,7 @@ public class JobCoordinatorService {
       Source source = mapping.getKey();
       Set<Store> stores = mapping.getValue();
 
-      Job job = groupingStrategy.getOrCreateJob(source, stores);
+      Job job = groupingStrategy.getOrCreateJob(source, stores, this.jobLabels);
 
       if (job.isDeployed()) {
         if (!job.isRunning()) {
@@ -176,9 +183,8 @@ public class JobCoordinatorService {
           // it would make sense to spawn clone of current job
           // and terminate old version on the next Poll.
           // Both jobs should be in the same consumer group and not conflict with each other
-          job = job.clone();
-          job.setId(groupingStrategy.createJobId(job));
-          job.setStores(stores);
+          job = job.cloneWithIdAndLabels(groupingStrategy.createJobId(job), this.jobLabels);
+          job.addAllStores(stores);
 
           isSafeToStopJobs = false;
 
@@ -187,11 +193,10 @@ public class JobCoordinatorService {
           jobTasks.add(new UpdateJobStatusTask(job, jobManager));
         }
       } else {
-        job.setId(groupingStrategy.createJobId(job));
         job.addAllFeatureSets(
             stores.stream()
                 .flatMap(s -> getFeatureSetsForStore(s).stream())
-                .filter(fs -> fs.getSource().equals(source))
+                .filter(fs -> fs.getSpec().getSource().equals(source))
                 .collect(Collectors.toSet()));
 
         jobTasks.add(new CreateJobTask(job, jobManager));
@@ -215,8 +220,9 @@ public class JobCoordinatorService {
   /**
    * Decides whether we need to upgrade (restart) given job. Since we send updated FeatureSets to
    * IngestionJob via Kafka, and there's only one source per job (if it change - new job would be
-   * created) the only things that can cause upgrade here are stores: new stores can be added, or
-   * existing stores will change subscriptions.
+   * created) main trigger that can cause upgrade here are stores: new stores can be added, or
+   * existing stores will change subscriptions. Another trigger is release of new version: current
+   * version is being compared with job's version stored in labels.
    *
    * @param job {@link Job} to check
    * @param stores Set of {@link Store} new version of stores (vs current version job.getStores())
@@ -224,7 +230,11 @@ public class JobCoordinatorService {
    */
   private boolean jobRequiresUpgrade(Job job, Set<Store> stores) {
     // if store subscriptions have changed
-    if (!Sets.newHashSet(stores).equals(Sets.newHashSet(job.getStores()))) {
+    if (!Sets.newHashSet(stores).equals(Sets.newHashSet(job.getStores().values()))) {
+      return true;
+    }
+
+    if (!this.currentVersion.equals(job.getLabels().get(VERSION_LABEL))) {
       return true;
     }
 
@@ -232,59 +242,64 @@ public class JobCoordinatorService {
   }
 
   /**
-   * Connects given {@link FeatureSet} with Jobs by creating {@link FeatureSetJobStatus}. This
+   * Connects given {@link FeatureSet} with Jobs by creating {@link FeatureSetDeliveryStatus}. This
    * connection represents responsibility of the job to handle allocated FeatureSet. We use this
-   * connection {@link FeatureSetJobStatus} to monitor Ingestion of specific FeatureSet and Specs
-   * delivery status.
+   * connection {@link FeatureSetDeliveryStatus} to monitor Ingestion of specific FeatureSet and
+   * Specs delivery status.
    *
    * <p>Only after this connection is created FeatureSetSpec could be sent to IngestionJob.
    *
    * @param featureSet featureSet {@link FeatureSet} to find jobs and allocate
    */
   FeatureSet allocateFeatureSetToJobs(FeatureSet featureSet) {
-    Map<FeatureSetJobStatus.FeatureSetJobStatusKey, FeatureSetJobStatus> current = new HashMap<>();
-    Map<FeatureSetJobStatus.FeatureSetJobStatusKey, FeatureSetJobStatus> existing =
-        featureSet.getJobStatuses().stream()
-            .collect(Collectors.toMap(FeatureSetJobStatus::getId, s -> s));
+    FeatureSetReference ref =
+        FeatureSetReference.of(featureSet.getSpec().getProject(), featureSet.getSpec().getName());
+    Set<String> confirmedJobIds = new HashSet<>();
 
     Stream<Pair<Source, Store>> jobArgsStream =
         getAllStores().stream()
             .filter(
                 s ->
                     isSubscribedToFeatureSet(
-                        s.getSubscriptions(),
-                        featureSet.getProject().getName(),
-                        featureSet.getName()))
-            .map(s -> Pair.of(featureSet.getSource(), s));
+                        s.getSubscriptionsList(),
+                        featureSet.getSpec().getProject(),
+                        featureSet.getSpec().getName()))
+            .map(s -> Pair.of(featureSet.getSpec().getSource(), s));
 
+    // Add featureSet to allocated job if not allocated before
     for (Pair<Source, Set<Store>> jobArgs : groupingStrategy.collectSingleJobInput(jobArgsStream)) {
-      Job job = groupingStrategy.getOrCreateJob(jobArgs.getLeft(), jobArgs.getRight());
+      Job job =
+          groupingStrategy.getOrCreateJob(
+              jobArgs.getLeft(), jobArgs.getRight(), Collections.emptyMap());
       if (!job.isRunning()) {
         continue;
       }
 
-      FeatureSetJobStatus status = new FeatureSetJobStatus();
-      status.setFeatureSet(featureSet);
-      status.setJob(job);
+      FeatureSetDeliveryStatus status = new FeatureSetDeliveryStatus();
+      status.setFeatureSetReference(ref);
       status.setDeliveryStatus(FeatureSetProto.FeatureSetJobDeliveryStatus.STATUS_IN_PROGRESS);
+      status.setDeliveredVersion(0);
 
-      current.put(
-          new FeatureSetJobStatus.FeatureSetJobStatusKey(job.getId(), featureSet.getId()), status);
+      Map<FeatureSetReference, FeatureSetDeliveryStatus> deliveryStatuses =
+          job.getFeatureSetDeliveryStatuses();
+
+      if (!deliveryStatuses.containsKey(ref)) {
+        deliveryStatuses.put(status.getFeatureSetReference(), status);
+      }
+
+      confirmedJobIds.add(job.getId());
     }
 
-    Set<FeatureSetJobStatus.FeatureSetJobStatusKey> toDelete =
-        Sets.difference(existing.keySet(), current.keySet());
-    Set<FeatureSetJobStatus.FeatureSetJobStatusKey> toAdd =
-        Sets.difference(current.keySet(), existing.keySet());
-
-    jobStatusRepository.deleteAll(toDelete.stream().map(existing::get).collect(Collectors.toSet()));
-    jobStatusRepository.saveAll(toAdd.stream().map(current::get).collect(Collectors.toSet()));
-    jobStatusRepository.flush();
+    // remove from other jobs that was not confirmed
+    for (Job job : jobRepository.findByFeatureSetReference(ref)) {
+      if (!confirmedJobIds.contains(job.getId())) {
+        job.getFeatureSetDeliveryStatuses().remove(ref);
+      }
+    }
     return featureSet;
   }
 
   /** Get running extra ingestion jobs that have ids not in keepJobs */
-  @Transactional
   private Collection<Job> getExtraJobs(List<Job> keepJobs) {
     List<Job> runningJobs = jobRepository.findByStatus(JobStatus.RUNNING);
     Map<String, Job> extraJobMap =
@@ -296,7 +311,7 @@ public class JobCoordinatorService {
   private List<Store> getAllStores() {
     ListStoresResponse listStoresResponse = specService.listStores(Filter.newBuilder().build());
     return listStoresResponse.getStoreList().stream()
-        .map(Store::fromProto)
+        .filter(s -> this.whitelistedStores.contains(s.getName()))
         .collect(Collectors.toList());
   }
 
@@ -306,7 +321,7 @@ public class JobCoordinatorService {
    *
    * @return a Map from source to stores.
    */
-  private Iterable<Pair<Source, Set<Store>>> getSourceToStoreMappings() {
+  Iterable<Pair<Source, Set<Store>>> getSourceToStoreMappings() {
     // build mapping from source to store.
     // compile a set of sources via subscribed FeatureSets of stores.
     Stream<Pair<Source, Store>> distinctPairs =
@@ -314,7 +329,7 @@ public class JobCoordinatorService {
             .flatMap(
                 store ->
                     getFeatureSetsForStore(store).stream()
-                        .map(FeatureSet::getSource)
+                        .map(f -> f.getSpec().getSource())
                         .map(source -> Pair.of(source, store)))
             .distinct();
     return groupingStrategy.collectSingleJobInput(distinctPairs);
@@ -326,42 +341,80 @@ public class JobCoordinatorService {
    * @param store to get subscribed FeatureSets for
    * @return list of FeatureSets that the store subscribes to.
    */
-  @Transactional
-  private List<FeatureSet> getFeatureSetsForStore(Store store) {
-    return store.getSubscriptions().stream()
+  List<FeatureSet> getFeatureSetsForStore(Store store) {
+    return store.getSubscriptionsList().stream()
         .flatMap(
-            subscription ->
-                featureSetRepository
-                    .findAllByNameLikeAndProject_NameLikeOrderByNameAsc(
-                        subscription.getName().replace('*', '%'),
-                        subscription.getProject().replace('*', '%'))
-                    .stream())
+            subscription -> {
+              try {
+                return specService
+                    .listFeatureSets(
+                        CoreServiceProto.ListFeatureSetsRequest.Filter.newBuilder()
+                            .setProject(subscription.getProject())
+                            .setFeatureSetName(subscription.getName())
+                            .build())
+                    .getFeatureSetsList().stream()
+                    .filter(
+                        f ->
+                            this.featureSetSubscriptions.isEmpty()
+                                || isSubscribedToFeatureSet(
+                                    this.featureSetSubscriptions,
+                                    f.getSpec().getProject(),
+                                    f.getSpec().getName()));
+              } catch (InvalidProtocolBufferException e) {
+                throw new RuntimeException(
+                    String.format(
+                        "Couldn't fetch featureSets for subscription %s. Reason: %s",
+                        subscription, e.getMessage()));
+              }
+            })
         .distinct()
         .collect(Collectors.toList());
   }
 
-  @Transactional
   @Scheduled(fixedDelayString = "${feast.stream.specsOptions.notifyIntervalMilliseconds}")
-  public void notifyJobsWhenFeatureSetUpdated() {
+  public void notifyJobsWhenFeatureSetUpdated() throws InvalidProtocolBufferException {
     List<FeatureSet> pendingFeatureSets =
-        featureSetRepository.findAllByStatus(FeatureSetProto.FeatureSetStatus.STATUS_PENDING);
+        specService
+            .listFeatureSets(
+                CoreServiceProto.ListFeatureSetsRequest.Filter.newBuilder()
+                    .setProject("*")
+                    .setFeatureSetName("*")
+                    .setStatus(FeatureSetProto.FeatureSetStatus.STATUS_PENDING)
+                    .build())
+            .getFeatureSetsList();
 
     pendingFeatureSets.stream()
         .map(this::allocateFeatureSetToJobs)
-        .filter(
+        .map(
             fs -> {
-              List<FeatureSetJobStatus> runningJobs =
-                  fs.getJobStatuses().stream()
-                      .filter(jobStatus -> jobStatus.getJob().isRunning())
+              FeatureSetReference ref =
+                  FeatureSetReference.of(fs.getSpec().getProject(), fs.getSpec().getName());
+              List<FeatureSetDeliveryStatus> deliveryStatuses =
+                  jobRepository.findByFeatureSetReference(ref).stream()
+                      .filter(Job::isRunning)
+                      .flatMap(job -> job.getFeatureSetDeliveryStatuses().values().stream())
+                      .filter(jobStatus -> jobStatus.getFeatureSetReference().equals(ref))
                       .collect(Collectors.toList());
 
-              return runningJobs.size() > 0
-                  && runningJobs.stream()
-                      .anyMatch(jobStatus -> jobStatus.getVersion() < fs.getVersion());
+              return Pair.of(fs, deliveryStatuses);
             })
+        .filter(
+            pair ->
+                pair.getRight().size() > 0
+                    && pair.getRight().stream()
+                        .anyMatch(
+                            jobStatus ->
+                                jobStatus.getDeliveredVersion()
+                                    < pair.getLeft().getSpec().getVersion()))
         .forEach(
-            fs -> {
-              log.info("Sending new FeatureSet {} to Ingestion", fs.getReference());
+            pair -> {
+              FeatureSet fs = pair.getLeft();
+              List<FeatureSetDeliveryStatus> deliveryStatuses = pair.getRight();
+
+              FeatureSetReference ref =
+                  FeatureSetReference.of(fs.getSpec().getProject(), fs.getSpec().getName());
+
+              log.info("Sending new FeatureSet {} to Ingestion", ref);
 
               // Sending latest version of FeatureSet to all currently running IngestionJobs
               // (there's one topic for all sets).
@@ -370,7 +423,7 @@ public class JobCoordinatorService {
               // again later.
               try {
                 specPublisher
-                    .sendDefault(fs.getReference(), fs.toProto().getSpec())
+                    .sendDefault(ref.getReference(), fs.getSpec())
                     .get(SPEC_PUBLISHING_TIMEOUT_SECONDS, TimeUnit.SECONDS);
               } catch (Exception e) {
                 log.error(
@@ -384,17 +437,12 @@ public class JobCoordinatorService {
               // FeatureSet).
               // We now set status to IN_PROGRESS, so listenAckFromJobs would be able to
               // monitor delivery progress for each new version.
-              Set<FeatureSetJobStatus> jobStatuses = fs.getJobStatuses();
-              jobStatuses.stream()
-                  .filter(s -> s.getJob().isRunning())
-                  .forEach(
-                      jobStatus -> {
-                        jobStatus.setDeliveryStatus(
-                            FeatureSetProto.FeatureSetJobDeliveryStatus.STATUS_IN_PROGRESS);
-                        jobStatus.setVersion(fs.getVersion());
-                      });
-              jobStatusRepository.saveAll(jobStatuses);
-              jobStatusRepository.flush();
+              deliveryStatuses.forEach(
+                  jobStatus -> {
+                    jobStatus.setDeliveryStatus(
+                        FeatureSetProto.FeatureSetJobDeliveryStatus.STATUS_IN_PROGRESS);
+                    jobStatus.setDeliveredVersion(fs.getSpec().getVersion());
+                  });
             });
   }
 
@@ -412,14 +460,19 @@ public class JobCoordinatorService {
   @KafkaListener(
       topics = {"${feast.stream.specsOptions.specsAckTopic}"},
       containerFactory = "kafkaAckListenerContainerFactory")
-  @Transactional
-  public void listenAckFromJobs(
-      ConsumerRecord<String, IngestionJobProto.FeatureSetSpecAck> record) {
+  public void listenAckFromJobs(ConsumerRecord<String, IngestionJobProto.FeatureSetSpecAck> record)
+      throws InvalidProtocolBufferException {
     String setReference = record.key();
     Pair<String, String> projectAndSetName = parseReference(setReference);
     FeatureSet featureSet =
-        featureSetRepository.findFeatureSetByNameAndProject_Name(
-            projectAndSetName.getRight(), projectAndSetName.getLeft());
+        specService
+            .getFeatureSet(
+                CoreServiceProto.GetFeatureSetRequest.newBuilder()
+                    .setProject(projectAndSetName.getLeft())
+                    .setName(projectAndSetName.getRight())
+                    .build())
+            .getFeatureSet();
+
     if (featureSet == null) {
       log.warn(
           String.format("ACKListener received message for unknown FeatureSet %s", setReference));
@@ -428,40 +481,49 @@ public class JobCoordinatorService {
 
     int ackVersion = record.value().getFeatureSetVersion();
 
-    if (featureSet.getVersion() != ackVersion) {
+    if (featureSet.getSpec().getVersion() != ackVersion) {
       log.warn(
           String.format(
               "ACKListener received outdated ack for %s. Current %d, Received %d",
-              setReference, featureSet.getVersion(), ackVersion));
+              setReference, featureSet.getSpec().getVersion(), ackVersion));
       return;
     }
 
-    log.info("Updating featureSet {} delivery statuses.", featureSet.getReference());
+    FeatureSetReference ref =
+        FeatureSetReference.of(featureSet.getSpec().getProject(), featureSet.getSpec().getName());
 
-    featureSet.getJobStatuses().stream()
-        .filter(
-            js ->
-                js.getJob().getId().equals(record.value().getJobName())
-                    && js.getVersion() == ackVersion)
-        .findFirst()
+    log.info("Updating featureSet {} delivery statuses.", ref);
+
+    jobRepository
+        .findById(record.value().getJobName())
+        .map(j -> j.getFeatureSetDeliveryStatuses().get(ref))
+        .filter(deliveryStatus -> deliveryStatus.getDeliveredVersion() == ackVersion)
         .ifPresent(
-            featureSetJobStatus ->
-                featureSetJobStatus.setDeliveryStatus(
+            deliveryStatus ->
+                deliveryStatus.setDeliveryStatus(
                     FeatureSetProto.FeatureSetJobDeliveryStatus.STATUS_DELIVERED));
 
     boolean allDelivered =
-        featureSet.getJobStatuses().stream()
-            .filter(js -> js.getJob().isRunning())
+        jobRepository.findByFeatureSetReference(ref).stream()
+            .filter(Job::isRunning)
+            .map(j -> j.getFeatureSetDeliveryStatuses().get(ref))
             .allMatch(
                 js ->
                     js.getDeliveryStatus()
                         .equals(FeatureSetProto.FeatureSetJobDeliveryStatus.STATUS_DELIVERED));
 
     if (allDelivered) {
-      log.info("FeatureSet {} update is completely delivered", featureSet.getReference());
+      log.info("FeatureSet {} update is completely delivered", ref);
 
-      featureSet.setStatus(FeatureSetProto.FeatureSetStatus.STATUS_READY);
-      featureSetRepository.saveAndFlush(featureSet);
+      specService.updateFeatureSetStatus(
+          CoreServiceProto.UpdateFeatureSetStatusRequest.newBuilder()
+              .setReference(
+                  FeatureSetReferenceProto.FeatureSetReference.newBuilder()
+                      .setName(ref.getFeatureSetName())
+                      .setProject(ref.getProjectName())
+                      .build())
+              .setStatus(FeatureSetProto.FeatureSetStatus.STATUS_READY)
+              .build());
     }
   }
 }

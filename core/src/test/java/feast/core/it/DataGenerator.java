@@ -22,9 +22,10 @@ import feast.proto.core.SourceProto;
 import feast.proto.core.StoreProto;
 import feast.proto.types.ValueProto;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 public class DataGenerator {
@@ -50,12 +51,7 @@ public class DataGenerator {
   }
 
   public static FeatureSetProto.FeatureSet getDefaultFeatureSet() {
-    return createFeatureSet(
-        DataGenerator.getDefaultSource(),
-        "default",
-        "test",
-        Collections.emptyList(),
-        Collections.emptyList());
+    return createFeatureSet(DataGenerator.getDefaultSource(), "default", "test");
   }
 
   public static SourceProto.Source createSource(String server, String topic) {
@@ -73,19 +69,70 @@ public class DataGenerator {
       String name,
       StoreProto.Store.StoreType type,
       List<Triple<String, String, Boolean>> subscriptions) {
-    return StoreProto.Store.newBuilder()
-        .addAllSubscriptions(
-            subscriptions.stream()
-                .map(
-                    s ->
-                        StoreProto.Store.Subscription.newBuilder()
-                            .setProject(s.getLeft())
-                            .setName(s.getMiddle())
-                            .setExclude(s.getRight())
-                            .build())
-                .collect(Collectors.toList()))
+    StoreProto.Store.Builder builder =
+        StoreProto.Store.newBuilder()
+            .addAllSubscriptions(
+                subscriptions.stream()
+                    .map(
+                        s ->
+                            StoreProto.Store.Subscription.newBuilder()
+                                .setProject(s.getLeft())
+                                .setName(s.getMiddle())
+                                .setExclude(s.getRight())
+                                .build())
+                    .collect(Collectors.toList()))
+            .setName(name)
+            .setType(type);
+
+    switch (type) {
+      case REDIS:
+        StoreProto.Store.RedisConfig redisConfig =
+            StoreProto.Store.RedisConfig.newBuilder().build();
+        return builder.setRedisConfig(redisConfig).build();
+      case BIGQUERY:
+        StoreProto.Store.BigQueryConfig bqConfig =
+            StoreProto.Store.BigQueryConfig.newBuilder().build();
+        return builder.setBigqueryConfig(bqConfig).build();
+      case REDIS_CLUSTER:
+        StoreProto.Store.RedisClusterConfig redisClusterConfig =
+            StoreProto.Store.RedisClusterConfig.newBuilder().build();
+        return builder.setRedisClusterConfig(redisClusterConfig).build();
+      default:
+        throw new RuntimeException("Unrecognized Store type");
+    }
+  }
+
+  public static FeatureSetProto.FeatureSpec createFeature(
+      String name, ValueProto.ValueType.Enum valueType, Map<String, String> labels) {
+    return FeatureSetProto.FeatureSpec.newBuilder()
         .setName(name)
-        .setType(type)
+        .setValueType(valueType)
+        .putAllLabels(labels)
+        .build();
+  }
+
+  public static FeatureSetProto.EntitySpec createEntity(
+      String name, ValueProto.ValueType.Enum valueType) {
+    return FeatureSetProto.EntitySpec.newBuilder().setName(name).setValueType(valueType).build();
+  }
+
+  public static FeatureSetProto.FeatureSet createFeatureSet(
+      SourceProto.Source source,
+      String projectName,
+      String name,
+      List<FeatureSetProto.EntitySpec> entities,
+      List<FeatureSetProto.FeatureSpec> features,
+      Map<String, String> labels) {
+    return FeatureSetProto.FeatureSet.newBuilder()
+        .setSpec(
+            FeatureSetProto.FeatureSetSpec.newBuilder()
+                .setSource(source)
+                .setName(name)
+                .setProject(projectName)
+                .putAllLabels(labels)
+                .addAllEntities(entities)
+                .addAllFeatures(features)
+                .build())
         .build();
   }
 
@@ -93,33 +140,43 @@ public class DataGenerator {
       SourceProto.Source source,
       String projectName,
       String name,
-      List<Pair<String, ValueProto.ValueType.Enum>> entities,
-      List<Pair<String, ValueProto.ValueType.Enum>> features) {
+      Map<String, ValueProto.ValueType.Enum> entities,
+      Map<String, ValueProto.ValueType.Enum> features,
+      Map<String, String> labels) {
     return FeatureSetProto.FeatureSet.newBuilder()
         .setSpec(
             FeatureSetProto.FeatureSetSpec.newBuilder()
                 .setSource(source)
                 .setName(name)
                 .setProject(projectName)
+                .putAllLabels(labels)
                 .addAllEntities(
-                    entities.stream()
-                        .map(
-                            pair ->
-                                FeatureSetProto.EntitySpec.newBuilder()
-                                    .setName(pair.getLeft())
-                                    .setValueType(pair.getRight())
-                                    .build())
+                    entities.entrySet().stream()
+                        .map(entry -> createEntity(entry.getKey(), entry.getValue()))
                         .collect(Collectors.toList()))
                 .addAllFeatures(
-                    features.stream()
+                    features.entrySet().stream()
                         .map(
-                            pair ->
-                                FeatureSetProto.FeatureSpec.newBuilder()
-                                    .setName(pair.getLeft())
-                                    .setValueType(pair.getRight())
-                                    .build())
+                            entry ->
+                                createFeature(
+                                    entry.getKey(), entry.getValue(), Collections.emptyMap()))
                         .collect(Collectors.toList()))
                 .build())
         .build();
+  }
+
+  public static FeatureSetProto.FeatureSet createFeatureSet(
+      SourceProto.Source source,
+      String projectName,
+      String name,
+      Map<String, ValueProto.ValueType.Enum> entities,
+      Map<String, ValueProto.ValueType.Enum> features) {
+    return createFeatureSet(source, projectName, name, entities, features, new HashMap<>());
+  }
+
+  public static FeatureSetProto.FeatureSet createFeatureSet(
+      SourceProto.Source source, String projectName, String name) {
+    return createFeatureSet(
+        source, projectName, name, Collections.emptyMap(), Collections.emptyMap());
   }
 }

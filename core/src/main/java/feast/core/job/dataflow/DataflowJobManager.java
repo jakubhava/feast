@@ -18,6 +18,8 @@ package feast.core.job.dataflow;
 
 import static feast.core.util.PipelineUtil.detectClassPathResourcesToStage;
 import static feast.core.util.StreamUtil.wrapException;
+import static feast.ingestion.utils.SpecUtil.parseSourceJson;
+import static feast.ingestion.utils.SpecUtil.parseStoreJsonList;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -41,7 +43,7 @@ import feast.proto.core.SourceProto;
 import feast.proto.core.StoreProto;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.beam.runners.dataflow.DataflowPipelineJob;
@@ -60,39 +62,45 @@ public class DataflowJobManager implements JobManager {
   private final DataflowRunnerConfig defaultOptions;
   private final MetricsProperties metrics;
   private final IngestionJobProto.SpecsStreamingUpdateConfig specsStreamingUpdateConfig;
+  private final Map<String, String> jobSelector;
 
-  public DataflowJobManager(
-      DataflowRunnerConfigOptions runnerConfigOptions,
-      MetricsProperties metricsProperties,
-      IngestionJobProto.SpecsStreamingUpdateConfig specsStreamingUpdateConfig) {
-    this(runnerConfigOptions, metricsProperties, specsStreamingUpdateConfig, getGoogleCredential());
-  }
-
-  public DataflowJobManager(
+  public static DataflowJobManager of(
       DataflowRunnerConfigOptions runnerConfigOptions,
       MetricsProperties metricsProperties,
       IngestionJobProto.SpecsStreamingUpdateConfig specsStreamingUpdateConfig,
-      Credential credential) {
+      Map<String, String> jobSelector) {
 
-    defaultOptions = new DataflowRunnerConfig(runnerConfigOptions);
-    Dataflow dataflow = null;
+    Dataflow dataflow;
     try {
       dataflow =
           new Dataflow(
               GoogleNetHttpTransport.newTrustedTransport(),
               JacksonFactory.getDefaultInstance(),
-              credential);
+              getGoogleCredential());
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException("Security exception while connecting to Dataflow API", e);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to initialize DataflowJobManager", e);
     }
 
+    return new DataflowJobManager(
+        runnerConfigOptions, metricsProperties, specsStreamingUpdateConfig, jobSelector, dataflow);
+  }
+
+  DataflowJobManager(
+      DataflowRunnerConfigOptions runnerConfigOptions,
+      MetricsProperties metricsProperties,
+      IngestionJobProto.SpecsStreamingUpdateConfig specsStreamingUpdateConfig,
+      Map<String, String> jobSelector,
+      Dataflow dataflow) {
+
+    defaultOptions = new DataflowRunnerConfig(runnerConfigOptions);
     this.dataflow = dataflow;
     this.metrics = metricsProperties;
     this.projectId = defaultOptions.getProject();
     this.location = defaultOptions.getRegion();
     this.specsStreamingUpdateConfig = specsStreamingUpdateConfig;
+    this.jobSelector = jobSelector;
   }
 
   private static Credential getGoogleCredential() {
@@ -117,10 +125,9 @@ public class DataflowJobManager implements JobManager {
       String extId =
           submitDataflowJob(
               job.getId(),
-              job.getSource().toProto(),
-              job.getStores().stream()
-                  .map(wrapException(Store::toProto))
-                  .collect(Collectors.toSet()),
+              job.getSource(),
+              new HashSet<>(job.getStores().values()),
+              job.getLabels(),
               false);
       job.setExtId(extId);
       return job;
@@ -212,10 +219,6 @@ public class DataflowJobManager implements JobManager {
    */
   @Override
   public JobStatus getJobStatus(Job job) {
-    if (job.getRunner() != RUNNER_TYPE) {
-      return job.getStatus();
-    }
-
     try {
       com.google.api.services.dataflow.model.Job dataflowJob =
           dataflow.projects().locations().jobs().get(projectId, location, job.getExtId()).execute();
@@ -229,10 +232,94 @@ public class DataflowJobManager implements JobManager {
     return JobStatus.UNKNOWN;
   }
 
-  private String submitDataflowJob(
-      String jobName, SourceProto.Source source, Set<StoreProto.Store> sinks, boolean update) {
+  @Override
+  public List<Job> listRunningJobs() {
+    List<com.google.api.services.dataflow.model.Job> jobs;
+
     try {
-      ImportOptions pipelineOptions = getPipelineOptions(jobName, source, sinks, update);
+      jobs =
+          dataflow
+              .projects()
+              .locations()
+              .jobs()
+              .list(projectId, location)
+              .setFilter("ACTIVE")
+              .execute()
+              .getJobs();
+    } catch (IOException e) {
+      throw new RuntimeException(
+          String.format("Unable to retrieve list of jobs from dataflow: %s", e.getMessage()));
+    }
+
+    if (jobs == null) {
+      return Collections.emptyList();
+    }
+
+    return jobs.stream()
+        .map(
+            dfJob -> {
+              try {
+                return dataflow
+                    .projects()
+                    .locations()
+                    .jobs()
+                    .get(projectId, location, dfJob.getId())
+                    .setView("JOB_VIEW_ALL")
+                    .execute();
+              } catch (IOException e) {
+                log.error(
+                    "Job's detailed info {} couldn't be loaded from Dataflow: {}",
+                    dfJob.getId(),
+                    e.getMessage());
+                return null;
+              }
+            })
+        .filter(
+            dfJob ->
+                dfJob != null
+                    && (dfJob.getLabels() != null || this.jobSelector.isEmpty())
+                    && this.jobSelector.entrySet().stream()
+                        .allMatch(
+                            entry ->
+                                dfJob
+                                    .getLabels()
+                                    .getOrDefault(entry.getKey(), "")
+                                    .equals(entry.getValue())))
+        .map(
+            dfJob -> {
+              Map<String, Object> options =
+                  (Map<String, Object>)
+                      dfJob.getEnvironment().getSdkPipelineOptions().get("options");
+
+              List<StoreProto.Store> stores =
+                  parseStoreJsonList((List<String>) options.get("storesJson"));
+              SourceProto.Source source = parseSourceJson((String) options.get("sourceJson"));
+
+              Job job =
+                  Job.builder()
+                      .setId((String) options.get("jobName"))
+                      .setSource(source)
+                      .setStores(
+                          stores.stream()
+                              .collect(Collectors.toMap(StoreProto.Store::getName, s -> s)))
+                      .build();
+
+              job.setExtId(dfJob.getId());
+              job.setStatus(JobStatus.RUNNING);
+
+              return job;
+            })
+        .collect(Collectors.toList());
+  }
+
+  private String submitDataflowJob(
+      String jobName,
+      SourceProto.Source source,
+      Set<StoreProto.Store> sinks,
+      Map<String, String> labels,
+      boolean update) {
+    try {
+      ImportOptions pipelineOptions = getPipelineOptions(jobName, source, sinks, labels, update);
       DataflowPipelineJob pipelineResult = runPipeline(pipelineOptions);
       String jobId = waitForJobToRun(pipelineResult);
       return jobId;
@@ -243,7 +330,11 @@ public class DataflowJobManager implements JobManager {
   }
 
   private ImportOptions getPipelineOptions(
-      String jobName, SourceProto.Source source, Set<StoreProto.Store> sinks, boolean update)
+      String jobName,
+      SourceProto.Source source,
+      Set<StoreProto.Store> sinks,
+      Map<String, String> labels,
+      boolean update)
       throws IOException, IllegalAccessException {
     ImportOptions pipelineOptions =
         PipelineOptionsFactory.fromArgs(defaultOptions.toArgs()).as(ImportOptions.class);
@@ -262,6 +353,12 @@ public class DataflowJobManager implements JobManager {
     pipelineOptions.setJobName(jobName);
     pipelineOptions.setFilesToStage(
         detectClassPathResourcesToStage(DataflowRunner.class.getClassLoader()));
+
+    // Merge common labels with job's labels
+    Map<String, String> mergedLabels = new HashMap<>(defaultOptions.getLabels());
+    labels.forEach(mergedLabels::put);
+    pipelineOptions.setLabels(mergedLabels);
+
     if (metrics.isEnabled()) {
       pipelineOptions.setMetricsExporterType(metrics.getType());
       if (metrics.getType().equals("statsd")) {

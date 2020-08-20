@@ -20,7 +20,17 @@ feast-core:
           specsAckTopic: $SPECS_TOPIC-ack
       jobs:
         active_runner: dataflow
-        consolidate-jobs-per-source: true
+        coordinator:
+          consolidate-jobs-per-source: true
+          jobSelector:
+            application: feast
+            tag: $IMAGE_TAG
+          featureSetSelector:
+            - project: "*"
+              name: "*"
+          whitelisted-stores:
+            - online
+            - historical
         runners:
         - name: dataflow
           type: DataflowRunner

@@ -65,9 +65,26 @@ feast:
       # Port of the metrics sink.
       port: 9125
 
-    # if true one job per source with many stores would be created
-    # if false one job per source-store pair would be created
-    consolidate-jobs-per-source: false
+    coordinator:
+      # if true one job per source with many stores would be created
+      # if false one job per source-store pair would be created
+      consolidate-jobs-per-source: false
+
+      # labels (map) that being assigned to job on creation.
+      # And also used to determine jobs that are being managed by current application
+      # among all running jobs
+      jobSelector:
+        application: feast
+
+      # Specify feature sets that should be handled by current instance of JobManager
+      featureSetSelector:
+        - project: "*"
+          name: "*"
+      # Stores names that are enabled on current instance of JobManager
+      whitelisted-stores:
+        - online
+        - online_cluster
+        - historical
 
   stream:
     # Feature stream type. Only kafka is supported.
@@ -98,6 +115,11 @@ feast:
         authorizationUrl: http://localhost:8082
         subjectClaim: email
         
+    # If set to true, HTTP REST endpoints at /api/v1 implemented by
+    # CoreServiceRestController will be accessible in Feast Core WITHOUT
+    # authentication.
+    disableRestControllerAuth: false
+
   logging:
     # Audit logging provides a machine readable structured JSON log that can give better 
     # insight into what is happening in Feast.
