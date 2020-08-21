@@ -1,7 +1,7 @@
 ### Getting Started Guide for Feast Core Developers
 
 Pre-requisites:
-- [Maven](https://maven.apache.org/install.html) build tool version 3.6.x
+- Build Feast as `./gradlew build -x check`
 - A running Postgres instance. For easier to get started, please configure the database like so
   ```
   database: postgres
@@ -16,13 +16,12 @@ Pre-requisites:
 - Access to Google Cloud BigQuery (optional)
 - Access to Kafka brokers (to test starting ingestion jobs from Feast Core)
 
-Run the following maven command to start Feast Core GRPC service running on port 6565 locally
+Run the following command to start Feast Core GRPC service running on port 6565 locally
 ```bash
-# Using configuration from src/main/resources/application.yml
-mvn spring-boot:run
-# Using configuration from custom location e.g. /tmp/config.application.yml
-mvn spring-boot:run -Dspring.config.location=/tmp/config.application.yml
+./bin/start-core.sh
 ```
+
+The Spring configuration is used from application.yml in the resources.
 
 If you have [grpc_cli](https://github.com/grpc/grpc/blob/master/doc/command_line_tool.md) installed, you can check that Feast Core is running
 ```
