@@ -3,25 +3,49 @@ plugins {
     id "com.diffplug.gradle.spotless" version "4.5.1"
     id 'ru.vyarus.use-python' version '2.2.0'
     id "org.openapi.generator" version "4.3.1"
-    id 'com.github.johnrengelman.shadow' version '6.0.0'
     id 'com.bmuschko.docker-remote-api' version '6.6.1'
     id "java"
     id 'jacoco'
+    id 'org.springframework.boot' version '2.3.3.RELEASE' apply false
 }
 
 allprojects {
     group = 'dev.feast'
 }
 
-subprojects {
+ext {
+    springBootProjects = [
+            project(":feast-core"),
+            project(":feast-serving")
+    ]
+}
+
+
+subprojects { project ->
     apply plugin: 'java'
     apply plugin: 'maven-publish'
     apply plugin: "com.diffplug.gradle.spotless"
     apply plugin: "jacoco"
-    apply plugin: 'com.github.johnrengelman.shadow'
 
-    shadowJar {
-        zip64 true
+    if (project in springBootProjects) {
+        apply plugin: 'org.springframework.boot'
+        springBoot {
+            buildInfo()
+        }
+
+        bootJar {
+            classifier = 'all'
+        }
+
+        configurations {
+            shadow
+        }
+
+        dependencies{
+            shadow files(bootJar.archivePath)
+        }
+
+        build.dependsOn bootJar
     }
 
     test {
@@ -82,5 +106,8 @@ subprojects {
             googleJavaFormat()
         }
     }
-    build.dependsOn shadowJar
+
+    configurations {
+        all*.exclude module : 'spring-boot-starter-logging'
+    }
 }

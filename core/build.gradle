@@ -66,7 +66,7 @@ dependencies {
   testImplementation 'com.github.tomakehurst:wiremock:2.27.0'
   testImplementation 'org.awaitility:awaitility:3.0.0'
   testImplementation 'org.awaitility:awaitility-proxy:3.0.0'
-  compileOnly 'org.postgresql:postgresql:42.2.14'
+  implementation 'org.postgresql:postgresql:42.2.14'
 
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
   testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
