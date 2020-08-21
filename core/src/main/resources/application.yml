@@ -103,7 +103,7 @@ feast:
       
   security:
     authentication:
-      enabled: false
+      enabled: true
       provider: jwt
       options:
         jwkEndpointURI: "https://www.googleapis.com/oauth2/v3/certs"
