@@ -16,7 +16,6 @@
  */
 package feast.serving.config;
 
-import feast.auth.credentials.GoogleAuthCredentials;
 import feast.auth.credentials.OAuthCredentials;
 import feast.proto.serving.ServingServiceGrpc;
 import io.grpc.CallCredentials;
@@ -86,8 +85,6 @@ public class ServingSecurityConfig {
   @ConditionalOnProperty(prefix = "feast.core-authentication", name = "enabled")
   CallCredentials CoreGrpcAuthenticationCredentials() throws IOException {
     switch (feastProperties.getCoreAuthentication().getProvider()) {
-      case "google":
-        return new GoogleAuthCredentials(feastProperties.getCoreAuthentication().getOptions());
       case "oauth":
         return new OAuthCredentials(feastProperties.getCoreAuthentication().getOptions());
       default:

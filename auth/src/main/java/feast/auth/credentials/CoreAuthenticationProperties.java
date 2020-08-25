@@ -16,16 +16,13 @@
  */
 package feast.auth.credentials;
 
-import feast.common.validators.OneOfStrings;
 import java.util.Map;
 
 public class CoreAuthenticationProperties {
   // needs to be set to true if authentication is enabled on core
   private boolean enabled;
 
-  // authentication provider to use
-  @OneOfStrings({"google", "oauth"})
-  private String provider;
+  private static final String provider = "oauth";
 
   // K/V options to initialize the provider.
   Map<String, String> options;
@@ -40,10 +37,6 @@ public class CoreAuthenticationProperties {
 
   public String getProvider() {
     return provider;
-  }
-
-  public void setProvider(String provider) {
-    this.provider = provider;
   }
 
   public Map<String, String> getOptions() {

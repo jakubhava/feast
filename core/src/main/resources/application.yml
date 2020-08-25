@@ -109,7 +109,7 @@ feast:
         jwkEndpointURI: "https://www.googleapis.com/oauth2/v3/certs"
 
     authorization:
-      enabled: false
+      enabled: true
       provider: http
       options:
         authorizationUrl: http://localhost:8082
@@ -154,6 +154,24 @@ spring:
     password: ${DB_PASSWORD:password}
   flyway:
     baseline-on-migrate: true
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: feast
+            client-secret: 6f3f3051-19ff-42e1-86c8-fa1cb12cae3c
+            authorization-grant-type: authorization_code
+            redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+            scope:
+              - openid
+        provider:
+          keycloak:
+            authorization-uri: http://localhost:8880/auth/realms/demo/protocol/openid-connect/auth
+            token-uri: http://localhost:8880/auth/realms/demo/protocol/openid-connect/token
+            user-info-uri: http://localhost:8880/auth/realms/demo/protocol/openid-connect/userinfo
+            jwk-set-uri: http://localhost:8880/auth/realms/demo/protocol/openid-connect/certs
+            user-name-attribute: preferred_username
 
 management:
   metrics:
@@ -164,3 +182,6 @@ management:
         enabled: true
         host: ${STATSD_HOST:localhost}
         port: ${STATSD_PORT:8125}
+
+server:
+  port: 11111

@@ -16,7 +16,7 @@
  */
 package feast.auth.config;
 
-import feast.auth.authentication.DefaultJwtAuthenticationProvider;
+import feast.auth.authentication.OpenIdConnectAuthenticationProvider;
 import feast.auth.authorization.AuthorizationProvider;
 import feast.auth.providers.http.HttpAuthorizationProvider;
 import java.util.ArrayList;
@@ -58,9 +58,7 @@ public class SecurityConfig {
     if (securityProperties.getAuthentication().isEnabled()) {
       switch (securityProperties.getAuthentication().getProvider()) {
         case "jwt":
-          providers.add(
-              new DefaultJwtAuthenticationProvider(
-                  securityProperties.getAuthentication().getOptions()));
+          providers.add(new OpenIdConnectAuthenticationProvider(securityProperties.getAuthentication().getOptions()));
           break;
         default:
           throw new IllegalArgumentException(
