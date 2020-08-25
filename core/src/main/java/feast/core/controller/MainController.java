@@ -33,8 +33,7 @@ public class MainController {
   @Autowired
   OAuth2AuthorizedClientService clientService;
 
-  @GetMapping("/")
-  String home(Principal user) {
+  private String getTokens(Principal user) {
     var auth = (OAuth2AuthenticationToken)SecurityContextHolder.getContext().getAuthentication();
     var userDetails =  (DefaultOidcUser) auth.getPrincipal();
     OAuth2AuthorizedClient client = clientService
@@ -42,5 +41,20 @@ public class MainController {
     var token = client.getAccessToken().getTokenValue();
     return "Hello " + user.getName() + ", your ID token is " + userDetails.getIdToken().getTokenValue() + "\n" +
             "Your Access token is + " + token;
+  }
+
+  @GetMapping("/")
+  String home(Principal user) {
+    return "Welcome to Feast";
+  }
+
+  @GetMapping("/admin")
+  String admin() {
+    return "Welcome Admin";
+  }
+
+  @GetMapping("/user")
+  String user() {
+    return "Welcome User";
   }
 }

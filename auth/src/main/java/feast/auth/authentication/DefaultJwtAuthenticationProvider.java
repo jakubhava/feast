@@ -25,7 +25,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 
 /** Json Web Token Authentication Provider used to validate incoming requests to Feast Core. */
-public class OpenIdConnectAuthenticationProvider implements AuthenticationProvider {
+public class DefaultJwtAuthenticationProvider implements AuthenticationProvider {
 
   private JwtAuthenticationProvider authProvider;
 
@@ -33,7 +33,7 @@ public class OpenIdConnectAuthenticationProvider implements AuthenticationProvid
    * @param options String K/V pair of options to initialize the AuthenticationProvider with. Only
    *     one option is currently configurable, the jwkEndpointURI.
    */
-  public OpenIdConnectAuthenticationProvider(Map<String, String> options) {
+  public DefaultJwtAuthenticationProvider(Map<String, String> options) {
     // Endpoint used to retrieve certificates to validate JWT token
     String jwkEndpointURI = options.get("jwkEndpointURI");
 
